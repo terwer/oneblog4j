@@ -11,11 +11,13 @@ import java.net.URL;
 public class App extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         URL resource = getClass().getResource("../resources/home.fxml");
         Parent root = FXMLLoader.load(resource);
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        // root.setStyle("-fx-font-family: 'serif'");
+
+        primaryStage.setTitle("一博");
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 }

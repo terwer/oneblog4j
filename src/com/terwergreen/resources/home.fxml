@@ -1,8 +1,15 @@
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.GridPane?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<GridPane fx:controller="com.terwergreen.controller.HomeController"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-</GridPane>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@Application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.terwergreen.controller.HomeController">
+    <FlowPane prefHeight="200.0" prefWidth="200.0">
+        <children>
+            <Button fx:id="btnChooseFile" mnemonicParsing="false" onAction="#chooseFileClicked" text="浏览" />
+            <ListView prefHeight="242.0" prefWidth="510.0" />
+        </children>
+    </FlowPane>
+</AnchorPane>
