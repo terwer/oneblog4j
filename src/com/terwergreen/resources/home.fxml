@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Pane?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@Application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.terwergreen.controller.HomeController">
-    <FlowPane prefHeight="200.0" prefWidth="200.0">
-        <Button fx:id="btnChooseFile" mnemonicParsing="false" onAction="#chooseFileClicked" text="浏览"/>
-        <ListView prefHeight="242.0" prefWidth="510.0"/>
-    </FlowPane>
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="577.0" prefWidth="806.0" stylesheets="@Application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.terwergreen.controller.HomeController">
+    <Pane layoutX="-551.0" layoutY="-144.0" prefHeight="561.0" prefWidth="930.0">
+        <children>
+            <Button fx:id="btnChooseFile" layoutX="606.0" layoutY="174.0" mnemonicParsing="false" onAction="#chooseFileClicked" text="浏览" />
+            <RadioButton fx:id="btnAuto" layoutX="683.0" layoutY="180.0" mnemonicParsing="false" selected="true" text="自动推测路径" />
+            <ComboBox fx:id="btnNoteDir" layoutX="607.0" layoutY="221.0" onAction="#btnNoteDirItemClicked" value="笔记目录">
+            </ComboBox>
+        </children>
+    </Pane>
+    <ListView fx:id="listNoteList" layoutX="63.0" layoutY="137.0" prefHeight="270.0" prefWidth="665.0" />
+    <Button layoutX="635.0" layoutY="76.0" mnemonicParsing="false" text="一键发布" />
+   <Button layoutX="519.0" layoutY="76.0" mnemonicParsing="false" text="发布" />
+      <Button fx:id="btnPreCheck" layoutX="342.0" layoutY="76.0" mnemonicParsing="false" text="发布前预检查" onAction="#btnPreCheckClicked"/>
+   <TextArea fx:id="txtLogTextArea" layoutX="63.0" layoutY="470.0" prefHeight="93.0" prefWidth="665.0" />
+   <Button fx:id="btnClearLog" layoutX="635.0" layoutY="428.0" mnemonicParsing="false" onAction="#clearLogClicked" text="清空日志" />
 </AnchorPane>

@@ -10,6 +10,16 @@ import java.net.URL;
 
 public class App extends Application {
 
+    private static Stage primaryStage;
+
+    private void setPrimaryStage(Stage stage) {
+        App.primaryStage = stage;
+    }
+
+    static public Stage getPrimaryStage() {
+        return App.primaryStage;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         URL resource = getClass().getResource("../resources/home.fxml");
@@ -18,6 +28,7 @@ public class App extends Application {
 
         primaryStage.setTitle("一博");
         primaryStage.setScene(new Scene(root));
+        setPrimaryStage(primaryStage);
         primaryStage.show();
     }
 }
