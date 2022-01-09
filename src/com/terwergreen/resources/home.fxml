@@ -17,7 +17,7 @@
             </ComboBox>
         </children>
     </Pane>
-    <ListView fx:id="listNoteList" layoutX="63.0" layoutY="137.0" prefHeight="270.0" prefWidth="665.0" />
+    <ListView fx:id="listNoteList" layoutX="63.0" layoutY="137.0" prefHeight="270.0" prefWidth="665.0" onMouseClicked="#onListNotesClicked"/>
     <Button layoutX="635.0" layoutY="76.0" mnemonicParsing="false" text="一键发布" />
    <Button layoutX="519.0" layoutY="76.0" mnemonicParsing="false" text="发布" />
       <Button fx:id="btnPreCheck" layoutX="342.0" layoutY="76.0" mnemonicParsing="false" text="发布前预检查" onAction="#btnPreCheckClicked"/>

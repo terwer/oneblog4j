@@ -1,21 +1,21 @@
 package com.terwergreen.controller;
 
-import com.terwergreen.main.App;
+import com.terwergreen.model.HomeData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.File;
 import java.net.URL;
@@ -194,23 +194,48 @@ public class HomeController implements Initializable {
         log(null, "笔记数据绑定成功");
     }
 
-    private void log(Object source, String msg) {
-        String logText = "[" + source + "]:" + msg + "\r\n";
-        if (null == source) {
-            logText = msg + "\r\n";
+
+    public void btnPreCheckClicked(ActionEvent event) {
+
+    }
+
+    public void onListNotesClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2) {
+            String currentItemSelected = listNoteList.getSelectionModel()
+                    .getSelectedItem();
+            // System.out.println("currentItemSelected = " + currentItemSelected);
+
+            HomeData homeData = new HomeData();
+            homeData.setPostTitle(currentItemSelected);
+            homeData.setFrom(this);
+
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../resources/write.fxml"));
+                Parent root1 = (Parent) loader.load();
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root1));
+                stage.setResizable(false);
+
+                // 传值
+                WriteController writeController = loader.getController();
+                writeController.initData(homeData);
+
+                stage.show();
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         }
-        txtLogTextArea.appendText(logText);
     }
 
     public void clearLogClicked(ActionEvent event) {
         txtLogTextArea.clear();
     }
 
-    public void btnPreCheckClicked(ActionEvent event) {
-
-
-
-
-
+    private void log(Object source, String msg) {
+        String logText = "[" + source + "]:" + msg + "\r\n";
+        if (null == source) {
+            logText = msg + "\r\n";
+        }
+        txtLogTextArea.appendText(logText);
     }
 }

@@ -29,6 +29,7 @@ public class App extends Application {
         primaryStage.setTitle("一博");
         primaryStage.setScene(new Scene(root));
         setPrimaryStage(primaryStage);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 }
