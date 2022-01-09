@@ -162,8 +162,11 @@ public class WriteController implements Initializable {
         content = content.replace("\n", "\\n");
         content = content.replace("\r", "\\r");
 
-
+        // 兼容自定义目录
         content = content.replace("images/", homeData.getFrom().getCurrentNoteImagesDir() + "/");
+
+        // 兼容MWeb
+        content = content.replace("media/", homeData.getFrom().getCurrentNoteDir() + "/media/");
 
         // System.out.println("content = " + content);
 

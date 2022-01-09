@@ -30,10 +30,25 @@ import java.util.ResourceBundle;
  */
 public class HomeController implements Initializable {
 
-    private static final String DEFAULT_DIR = "/Users/terwer/Documents/workspace/lg2021/homework";
-    private String NOTE_DIR = "笔记";
-    private String NOTE_IMAGES_DIR = "images";
+    // =================================
+    // 自定义目录
+    // private static final String DEFAULT_DIR = "/Users/terwer/Documents/workspace/lg2021/homework";
+    // private String NOTE_DIR = "笔记";
+    // private String NOTE_IMAGES_DIR = "images";
 
+    // =================================
+    // =================================
+
+    // =================================
+    // MWeb目录
+    private static final String MWEB_DEFAULT_DIR = "/Users/terwer/Documents/MWebLibrary";
+    private static final String DEFAULT_DIR = MWEB_DEFAULT_DIR;
+    private String MWEB_NOTE_DIR = "";
+    private String NOTE_DIR = MWEB_NOTE_DIR;
+    private String MWEB_NOTE_IMAGES_DIR = "images";
+    private String NOTE_IMAGES_DIR = MWEB_NOTE_IMAGES_DIR;
+    // ==================================
+    // =================================
 
     public String getCurrentDir() {
         return currentDir;
@@ -142,7 +157,9 @@ public class HomeController implements Initializable {
 
         for (int i = 0; i < noteDirs.length; i++) {
             File dir = noteDirs[i];
-            if (!dir.isDirectory() || dir.getName().startsWith("$")) {
+            if (!dir.isDirectory() || dir.getName().startsWith("$")
+                    || dir.getName().startsWith("metadata")
+            ) {
                 continue;
             }
             // System.out.println(dir.getName());
@@ -221,7 +238,7 @@ public class HomeController implements Initializable {
                 writeController.initData(homeData);
 
                 stage.show();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
