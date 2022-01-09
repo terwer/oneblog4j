@@ -75,7 +75,7 @@
               </textFill>
             </Label>
                   <Label fx:id="lblPostTitle" layoutX="14.0" layoutY="50.0" text="Label" />
-                  <TitledPane animated="true" layoutX="10.0" layoutY="78.0" text="发布平台" fx:id="txtBlogType">
+                  <TitledPane fx:id="txtBlogType" animated="true" layoutX="10.0" layoutY="78.0" text="发布平台">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0">
                            <children>
@@ -85,13 +85,15 @@
                         </AnchorPane>
                     </content>
                   </TitledPane>
-                  <Button layoutX="63.0" layoutY="818.0" mnemonicParsing="false" text="发布" onAction="#btnPublish"/>
+                  <Button layoutX="63.0" layoutY="818.0" mnemonicParsing="false" onAction="#btnPublish" text="发布" />
                   <ComboBox layoutX="14.0" layoutY="306.0" prefHeight="25.0" prefWidth="128.0" promptText="分类" />
                   <ComboBox layoutX="14.0" layoutY="360.0" prefHeight="25.0" prefWidth="128.0" promptText="标签" />
                   <Button layoutX="47.0" layoutY="758.0" mnemonicParsing="false" text="检测关联" />
                   <ComboBox layoutX="14.0" layoutY="413.0" prefHeight="25.0" prefWidth="128.0" promptText="文章关联" />
                   <Label layoutX="16.0" layoutY="459.0" text="关联信息" />
-                  <Button fx:id="btnPastePic" layoutX="14.0" layoutY="698.0" mnemonicParsing="false" text="插入剪贴板图片" onAction="#pastePic" />
+                  <Button fx:id="btnPastePic" layoutX="14.0" layoutY="698.0" mnemonicParsing="false" onAction="#pastePic" text="插入剪贴板图片" />
+                  <Button fx:id="btnSaveLocal" layoutX="16.0" layoutY="657.0" mnemonicParsing="false" onAction="#saveLocal" text="保存到本地" />
+                  <Label fx:id="lblMsg" layoutX="16.0" layoutY="616.0" text="操作信息" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="907.0" prefWidth="140.0">

@@ -26,11 +26,13 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
 import javax.imageio.ImageIO;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,6 +40,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -79,6 +83,9 @@ public class WriteController implements Initializable {
 
     @FXML
     private RadioButton rdBuguCMS;
+
+    @FXML
+    private Label lblMsg;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -181,6 +188,20 @@ public class WriteController implements Initializable {
         return sb.toString();
     }
 
+    /**
+     * 写文件
+     *
+     * @param newStr 新内容
+     * @throws IOException
+     */
+    public static void writeTxtFile(String filename, String newStr) throws IOException {
+        File f = new File(filename);
+        FileOutputStream fos1 = new FileOutputStream(f);
+        OutputStreamWriter dos1 = new OutputStreamWriter(fos1);
+        dos1.write(newStr);
+        dos1.close();
+    }
+
     public void pastePic(ActionEvent event) {
         Clipboard cb = Clipboard.getSystemClipboard();
         if (cb.hasImage()) {
@@ -248,5 +269,35 @@ public class WriteController implements Initializable {
         } else {
             System.out.println("else");
         }
+    }
+
+    public void saveLocal(ActionEvent event) {
+        String content = txtWriteContent.getText();
+
+        String noteDir = homeData.getFrom().getCurrentNoteDir();
+        String notePath = Paths.get(noteDir, "/" + lblPostTitle.getText()).toString();
+
+        try {
+            writeTxtFile(notePath, content);
+
+            successMsg("保存成功：" + System.currentTimeMillis());
+        } catch (Exception e) {
+            errorMsg(e.getMessage());
+
+            e.printStackTrace();
+        }
+
+        System.out.println("文件已保存到：" + notePath);
+    }
+
+    private void successMsg(String msg) {
+        lblMsg.setText(msg);
+        lblMsg.setTextFill(Color.color(32 / 255f, 168 / 255f, 92 / 255f));
+    }
+
+
+    private void errorMsg(String msg) {
+        lblMsg.setText(msg);
+        lblMsg.setTextFill(Color.color(1, 0, 0));
     }
 }
