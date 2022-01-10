@@ -1,5 +1,6 @@
 package com.terwergreen;
 
+import com.terwergreen.util.ResourceUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,7 +10,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * JavaFX App
+ * @author: terwer
+ * @date: 2022/1/10 16:13
+ * @description: JavaFX com.terwergreen.App
  */
 public class App extends Application {
 
@@ -17,7 +20,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        scene = new Scene(loadFXML("home"), 640, 480);
         stage.setScene(scene);
         stage.show();
     }
@@ -27,7 +30,7 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(ResourceUtil.getResourceAsURL(fxml + ".fxml"));
         return fxmlLoader.load();
     }
 

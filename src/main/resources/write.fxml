@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<VBox prefHeight="960.0" prefWidth="1536.0" stylesheets="@Application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.terwergreen.controller.WriteController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="New" />
+            <MenuItem mnemonicParsing="false" text="Open…" />
+            <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" text="Revert" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem mnemonicParsing="false" text="Copy" />
+            <MenuItem mnemonicParsing="false" text="Paste" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Select All" />
+            <MenuItem mnemonicParsing="false" text="Unselect All" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About OneBlog4j" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <SplitPane dividerPositions="0.10462842242503259, 0.5309647979139505" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane prefHeight="907.0" prefWidth="175.0">
+          <children>
+            <Label alignment="CENTER" layoutX="10.0" layoutY="14.0" style="&#10;" text="文章信息" textAlignment="CENTER" wrapText="false">
+              <font>
+                <Font size="18.0" fx:id="x1" />
+              </font>
+              <textFill>
+                <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
+              </textFill>
+            </Label>
+                  <Label fx:id="lblPostTitle" layoutX="14.0" layoutY="50.0" text="Label" />
+                  <TitledPane fx:id="txtBlogType" animated="true" layoutX="10.0" layoutY="78.0" text="发布平台">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0">
+                           <children>
+                              <RadioButton fx:id="rdCnblogs" layoutX="13.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="CnBlogs" />
+                              <RadioButton fx:id="rdBuguCMS" layoutX="14.0" layoutY="43.0" mnemonicParsing="false" text="BuguCMS" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <Button layoutX="63.0" layoutY="818.0" mnemonicParsing="false" onAction="#btnPublish" text="发布" />
+                  <ComboBox layoutX="14.0" layoutY="306.0" prefHeight="25.0" prefWidth="128.0" promptText="分类" />
+                  <ComboBox layoutX="14.0" layoutY="360.0" prefHeight="25.0" prefWidth="128.0" promptText="标签" />
+                  <Button layoutX="47.0" layoutY="758.0" mnemonicParsing="false" text="检测关联" />
+                  <ComboBox layoutX="14.0" layoutY="413.0" prefHeight="25.0" prefWidth="128.0" promptText="文章关联" />
+                  <Label layoutX="16.0" layoutY="459.0" text="关联信息" />
+                  <Button fx:id="btnPastePic" layoutX="14.0" layoutY="698.0" mnemonicParsing="false" onAction="#pastePic" text="插入剪贴板图片" />
+                  <Button fx:id="btnSaveLocal" layoutX="16.0" layoutY="657.0" mnemonicParsing="false" onAction="#saveLocal" text="保存到本地" />
+                  <Label fx:id="lblMsg" layoutX="16.0" layoutY="616.0" text="操作信息" />
+          </children>
+        </AnchorPane>
+        <ScrollPane prefHeight="907.0" prefWidth="140.0">
+          <content>
+            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0">
+              <children>
+                <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="写作" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+                        <TextArea fx:id="txtWriteContent" layoutX="14.0" layoutY="45.0" onMouseClicked="#contentClicked" prefHeight="838.0" prefWidth="608.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </ScrollPane>
+        <AnchorPane prefWidth="648.0">
+          <children>
+            <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="预览" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+                  <WebView fx:id="webPreview" layoutX="10.0" layoutY="42.0" prefHeight="840.0" prefWidth="680.0" />
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+      <children>
+        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
+          <font>
+            <Font size="11.0" fx:id="x3" />
+          </font>
+          <textFill>
+            <Color red="0.625" green="0.625" blue="0.625" fx:id="x4" />
+          </textFill>
+        </Label>
+        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <Label font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>
