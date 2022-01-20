@@ -8,6 +8,8 @@ import com.terwergreen.model.Post;
  * @description: BlogHelper
  */
 public abstract class BlogHelper {
+
+
     public abstract boolean addPost(Post post);
     public abstract boolean updatePost(Post post);
 }
