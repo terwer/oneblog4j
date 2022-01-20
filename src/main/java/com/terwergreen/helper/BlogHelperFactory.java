@@ -16,7 +16,7 @@ public class BlogHelperFactory {
     private static Properties blogProps = new Properties();
 
     static {
-        InputStream blogPropsStream = App.class.getClassLoader().getResourceAsStream("blog.properties");
+        InputStream blogPropsStream = App.class.getClassLoader().getResourceAsStream("blog-pro.properties");
         try {
             blogProps.load(blogPropsStream);
         } catch (IOException e) {
