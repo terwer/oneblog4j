@@ -5,9 +5,14 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.AsyncCallback;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: terwer
@@ -15,6 +20,9 @@ import java.util.*;
  * @description: BlogHelper
  */
 public abstract class BlogHelper {
+
+    private static Logger logger = LoggerFactory.getLogger(BlogHelper.class);
+
     private String serverUrl;
     private String username;
     private String password;
@@ -103,7 +111,7 @@ public abstract class BlogHelper {
             userBlog = (HashMap<String, Object>) result[0];
         }
 
-        System.out.println("blogger.getUsersBlogs=>");
+        logger.debug("blogger.getUsersBlogs=>");
         return userBlog;
     }
 

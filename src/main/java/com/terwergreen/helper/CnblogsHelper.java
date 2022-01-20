@@ -1,8 +1,13 @@
 package com.terwergreen.helper;
 
 import com.terwergreen.model.Post;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author: terwer
@@ -10,6 +15,9 @@ import java.util.*;
  * @description: CnblogsHelper
  */
 public class CnblogsHelper extends BlogHelper {
+
+    private static Logger logger = LoggerFactory.getLogger(CnblogsHelper.class);
+
     public CnblogsHelper(Properties blogProps) {
         super((String) blogProps.get("blog.meteweblog.cnblogs.serverUrl"), (String) blogProps.get("blog.meteweblog.cnblogs.username"), (String) blogProps.get("blog.meteweblog.cnblogs.password"));
     }
@@ -28,13 +36,13 @@ public class CnblogsHelper extends BlogHelper {
 
         Object result = super.executeMeteweblog("blogger.getUsersBlogs", pParams);
 
-        System.out.println("CnBlogs add Post:" + result);
+        logger.debug("CnBlogs add Post:" + result);
         return false;
     }
 
     @Override
     public boolean updatePost(Post post) {
-        System.out.println("CnBlogs update Post");
+        logger.debug("CnBlogs update Post");
         return false;
     }
 }

@@ -1,6 +1,5 @@
 package com.terwergreen.controller;
 
-import com.terwergreen.App;
 import com.terwergreen.model.HomeData;
 import com.terwergreen.util.ResourceUtil;
 import javafx.event.ActionEvent;
@@ -18,6 +17,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -31,6 +32,8 @@ import java.util.ResourceBundle;
  * @description:
  */
 public class HomeController implements Initializable {
+
+    private static Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     // =================================
     // 自定义目录
@@ -100,7 +103,7 @@ public class HomeController implements Initializable {
 
     // 注意：构造函数在初始化之前，不能访问控件
     public HomeController() {
-        // System.out.println("主界面构造完毕");
+        // logger.debug("主界面构造完毕");
     }
 
     public void chooseFileClicked(ActionEvent event) {
@@ -125,7 +128,7 @@ public class HomeController implements Initializable {
     }
 
     public void btnNoteDirItemClicked(ActionEvent event) {
-        // System.out.println("目录点击事件");
+        // logger.debug("目录点击事件");
         ComboBox<String> item = (ComboBox<String>) event.getSource();
 
         if (null == item.getValue()) {
@@ -164,7 +167,7 @@ public class HomeController implements Initializable {
             ) {
                 continue;
             }
-            // System.out.println(dir.getName());
+            // logger.debug(dir.getName());
             btnNoteDir.getItems().addAll(dir.getName());
         }
 
@@ -222,7 +225,7 @@ public class HomeController implements Initializable {
         if (mouseEvent.getClickCount() == 2) {
             String currentItemSelected = listNoteList.getSelectionModel()
                     .getSelectedItem();
-            // System.out.println("currentItemSelected = " + currentItemSelected);
+            // logger.debug("currentItemSelected = " + currentItemSelected);
 
             HomeData homeData = new HomeData();
             homeData.setPostTitle(currentItemSelected);
@@ -251,10 +254,9 @@ public class HomeController implements Initializable {
     }
 
     private void log(Object source, String msg) {
-        String logText = "[" + source + "]:" + msg + "\r\n";
-        if (null == source) {
-            logText = msg + "\r\n";
-        }
-        txtLogTextArea.appendText(logText);
+        String logText = "[" + source + "]:" + msg;
+        txtLogTextArea.appendText(logText + "\r\n");
+
+        logger.debug(logText);
     }
 }

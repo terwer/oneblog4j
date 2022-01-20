@@ -1,11 +1,10 @@
 package com.terwergreen.controller;
 
-import com.terwergreen.App;
-import com.terwergreen.model.HomeData;
-import com.terwergreen.model.Post;
 import com.terwergreen.helper.BlogHelper;
 import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
+import com.terwergreen.model.HomeData;
+import com.terwergreen.model.Post;
 import com.terwergreen.util.ResourceUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,6 +27,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -39,7 +40,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -53,6 +53,9 @@ import java.util.ResourceBundle;
  * @description: WriteController
  */
 public class WriteController implements Initializable {
+
+    private static Logger logger = LoggerFactory.getLogger(WriteController.class);
+
     private static final int MAX_IMAGE_NUM = 10000;
     private HomeData homeData;
 
@@ -92,15 +95,15 @@ public class WriteController implements Initializable {
             WebEngine engine = webPreview.getEngine();
             reloadPreview(engine, content);
 
-            System.out.println("内容已同步");
-            // System.out.println("文字改变");
+            logger.debug("内容已同步");
+            // logger.debug("文字改变");
         });
 
 //        txtWriteContent.addEventFilter(KEY_TYPED, event -> {
 //            final String s = event.getCharacter();
 //            char c = s.charAt(0);
 //            if (c >= '\u0021' && c <= '\u007E') {
-//                System.out.println("接收粘贴");
+//                logger.debug("接收粘贴");
 //                event.consume();
 //            }
 //        });
@@ -112,7 +115,7 @@ public class WriteController implements Initializable {
         lblPostTitle.setText(homeData.getPostTitle());
 
         loadPost(homeData);
-        // System.out.println(homeData.getFrom().getCurrentNoteDir());
+        // logger.debug(homeData.getFrom().getCurrentNoteDir());
     }
 
     private void loadPost(HomeData homeData) {
@@ -160,7 +163,7 @@ public class WriteController implements Initializable {
         // 兼容MWeb
         content = content.replace("media/", homeData.getFrom().getCurrentNoteDir() + "/media/");
 
-        // System.out.println("content = " + content);
+        // logger.debug("content = " + content);
 
         engine.executeScript("if(typeof setEditorValue != 'undefined'){window.editorContentMD='" + content + "';setEditorValue(window.editorContentMD);}");
     }
@@ -200,7 +203,7 @@ public class WriteController implements Initializable {
     public void pastePic(ActionEvent event) {
         Clipboard cb = Clipboard.getSystemClipboard();
         if (cb.hasImage()) {
-            System.out.println("处理粘贴图片");
+            logger.debug("处理粘贴图片");
 
             Image img = cb.getImage();
             // imageView.setImage(image);
@@ -250,19 +253,19 @@ public class WriteController implements Initializable {
         Optional<ButtonType> option = alert.showAndWait();
 
         if (option.get() == null) {
-            System.out.println("null");
+            logger.debug("null");
         } else if (option.get() == ButtonType.OK) {
 
             blogHelper.addPost(post);
-            System.out.println("文章已发布");
+            logger.debug("文章已发布");
 
-            System.out.println("ok");
+            logger.debug("ok");
         } else if (option.get() == ButtonType.CANCEL) {
-            System.out.println("cancel");
+            logger.debug("cancel");
         } else if (option.get() == show) {
-            System.out.println("show");
+            logger.debug("show");
         } else {
-            System.out.println("else");
+            logger.debug("else");
         }
     }
 
@@ -282,7 +285,7 @@ public class WriteController implements Initializable {
             e.printStackTrace();
         }
 
-        System.out.println("文件已保存到：" + notePath);
+        logger.debug("文件已保存到：" + notePath);
     }
 
     private void successMsg(String msg) {
