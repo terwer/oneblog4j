@@ -4,6 +4,11 @@ import com.terwergreen.helper.BlogTypeEnum;
 import com.terwergreen.model.Post;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 博客API测试类
  *
@@ -14,11 +19,17 @@ import org.junit.Test;
 public class BlogHelperTest {
 
     @Test
-    private void testApi() {
+    public void testMetaWeblogApi_blogger_getUsersBlogs() {
         BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(BlogTypeEnum.CNBLOGS);
+        Map<String, Object> reaultMap = blogHelper.getUsersBlogs();
+        System.out.println("reaultMap = " + reaultMap);
+    }
 
-        Post post = new Post();
+    @Test
+    public void testApi_blogger_getUsersBlogs() {
+        BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(BlogTypeEnum.BUGUCMS);
+        Map<String, Object> reaultMap = blogHelper.getUsersBlogs();
 
-        blogHelper.addPost(post);
+        System.out.println("reaultMap = " + reaultMap);
     }
 }
