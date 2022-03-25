@@ -32,6 +32,7 @@ public class BlogHelperFactory {
         switch (blogType) {
             case BUGUCMS: {
                 return new BuguCMSHelper(blogProps);
+                // return new BuguCMSApiHelper(blogProps);
             }
             case CNBLOGS: {
                 return new CnblogsHelper(blogProps);

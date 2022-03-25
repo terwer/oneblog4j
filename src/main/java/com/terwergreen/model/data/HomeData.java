@@ -1,4 +1,4 @@
-package com.terwergreen.model;
+package com.terwergreen.model.data;
 
 import com.terwergreen.controller.HomeController;
 
@@ -9,6 +9,7 @@ import com.terwergreen.controller.HomeController;
  */
 public class HomeData {
     HomeController from;
+    String mwebFileId;
     String postTitle;
 
     public HomeController getFrom() {
@@ -17,6 +18,14 @@ public class HomeData {
 
     public void setFrom(HomeController from) {
         this.from = from;
+    }
+
+    public String getMwebFileId() {
+        return mwebFileId;
+    }
+
+    public void setMwebFileId(String mwebFileId) {
+        this.mwebFileId = mwebFileId;
     }
 
     public String getPostTitle() {

@@ -3,7 +3,7 @@ package com.terwergreen.controller;
 import com.terwergreen.helper.BlogHelper;
 import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
-import com.terwergreen.model.HomeData;
+import com.terwergreen.model.data.HomeData;
 import com.terwergreen.model.Post;
 import com.terwergreen.util.ResourceUtil;
 import javafx.beans.value.ChangeListener;
@@ -112,14 +112,14 @@ public class WriteController implements Initializable {
     public void initData(HomeData homeData) {
         this.homeData = homeData;
 
-        lblPostTitle.setText(homeData.getPostTitle());
+        lblPostTitle.setText(homeData.getMwebFileId() + "|" + homeData.getPostTitle());
 
         loadPost(homeData);
         // logger.debug(homeData.getFrom().getCurrentNoteDir());
     }
 
     private void loadPost(HomeData homeData) {
-        String postPath = Paths.get(homeData.getFrom().getCurrentNoteDir(), "/", homeData.getPostTitle()).toString();
+        String postPath = Paths.get(homeData.getFrom().getCurrentNoteDir(), "/", homeData.getMwebFileId()).toString();
         // File file = new File(postPath);
 
         try {
@@ -214,14 +214,18 @@ public class WriteController implements Initializable {
             Random rnd = new Random(MAX_IMAGE_NUM);
             fileName = fileName + rnd.nextInt() + ".png";
 
-            String fileShortName = "image-" + fileName;
-            String outPath = homeData.getFrom().getCurrentNoteImagesDir() + "/" + fileShortName;
+            String fileShortName = "oneblog-image-" + fileName;
+            String outPath = homeData.getFrom().getCurrentNoteImagesDir() + "/" +
+                    homeData.getMwebFileId().replace(".md", "") + "/"
+                    + fileShortName;
             File file = new File(outPath);
             try {
                 ImageIO.write(SwingFXUtils.fromFXImage(img, null), "PNG", file);
 
                 int caretPosition = txtWriteContent.getCaretPosition();
-                txtWriteContent.insertText(caretPosition, "![](images/" + fileShortName + ")");
+                txtWriteContent.insertText(caretPosition, "![](media/" +
+                        homeData.getMwebFileId().replace(".md", "") + "/"
+                        + fileShortName + ")");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -273,7 +277,7 @@ public class WriteController implements Initializable {
         String content = txtWriteContent.getText();
 
         String noteDir = homeData.getFrom().getCurrentNoteDir();
-        String notePath = Paths.get(noteDir, "/" + lblPostTitle.getText()).toString();
+        String notePath = Paths.get(noteDir, "/" + homeData.getMwebFileId()).toString();
 
         try {
             writeTxtFile(notePath, content);

@@ -8,7 +8,7 @@ debug：当此属性设置为true时,将打印出logback内部日志信息,实�
     <!-- 定义日志的根目录为项目的根目录,前面不要加"/",加了会默认会认为是根目录,提示 classnotfond -->
     <property name="LOG_HOME" value="logs"/>
     <!-- 定义日志文件名称 -->
-    <property name="appName" value="login.log"/>
+    <property name="appName" value="oneblog4j.log"/>
 
     <!-- ConsoleAppender 用于控制台输出 -->
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
@@ -72,7 +72,7 @@ debug：当此属性设置为true时,将打印出logback内部日志信息,实�
     <appender name="appLogAppenderBoot" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 
-            <fileNamePattern>${LOG_HOME}/boot-${appName}-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/app-${appName}-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
 
             <MaxHistory>365</MaxHistory>
 

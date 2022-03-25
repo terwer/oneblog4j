@@ -1,8 +1,6 @@
 package com.terwergreen.helper;
 
-import com.alibaba.fastjson.JSONObject;
 import com.terwergreen.model.Post;
-import com.terwergreen.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,43 +10,41 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * BugUCMS的metaWeblogApi实现
+ *
+ * @name: BuguCMSHelper
  * @author: terwer
- * @date: 2022/1/9 18:55
- * @description: BuguCMSHelper
- */
-public class BuguCMSHelper extends BlogHelper {
+ * @date: 2022-03-07 11:26
+ **/
+public class BuguCMSHelper extends BlogHelper{
 
     private static Logger logger = LoggerFactory.getLogger(BuguCMSHelper.class);
 
     public BuguCMSHelper(Properties blogProps) {
-        super((String) blogProps.get("blog.jsonapi.bugucms.baseUrl"), "", "");
+        super((String) blogProps.get("blog.meteweblog.bugucms.serverUrl"), (String) blogProps.get("blog.meteweblog.bugucms.username"), (String) blogProps.get("blog.meteweblog.bugucms.password"));
     }
 
     @Override
     public Map<String, Object> getUsersBlogs() {
-        List<String> pParams = new ArrayList<>();
-
-        // /site/config
-        String url = this.getServerUrl() + "/site/config";
-        String resultString = HttpUtil.get(url);
-
-        JSONObject jsonObject = JSONObject.parseObject(resultString);
-        //json对象转Map
-        Map<String, Object> reaultMap = (Map<String, Object>) jsonObject;
-
-        logger.debug("blogger.getUsersBlogs=>");
-        return reaultMap;
+        return super.getUsersBlogs();
     }
 
     @Override
     public boolean addPost(Post post) {
-        logger.debug("BuguCMS addPost");
+        List<String> pParams = new ArrayList<>();
+        pParams.add("default");
+        pParams.add(super.getUsername());
+        pParams.add(super.getPassword());
+
+        Object result = super.executeMeteweblog("blogger.getUsersBlogs", pParams);
+
+        logger.debug("CnBlogs add Post:" + result);
         return false;
     }
 
     @Override
     public boolean updatePost(Post post) {
-        logger.debug("BuguCMS updatePost");
+        logger.debug("CnBlogs update Post");
         return false;
     }
 }

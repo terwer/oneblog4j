@@ -61,11 +61,11 @@ public abstract class BlogHelper {
             // Call the server, and get our result.
             result = client.execute(pMethodName, pParams);
         } catch (XmlRpcException exception) {
-            System.err.println("JavaClient: XML-RPC Fault #" +
+            logger.error("JavaClient: XML-RPC Fault #" +
                     Integer.toString(exception.code) + ": " +
                     exception.toString());
         } catch (Exception exception) {
-            System.err.println("JavaClient: " + exception.toString());
+            logger.error("JavaClient: " + exception.toString());
         }
         return result;
     }
@@ -83,11 +83,11 @@ public abstract class BlogHelper {
             // Call the server, and get our result.
             client.executeAsync(pMethodName, pParams, pCallback);
         } catch (XmlRpcException exception) {
-            System.err.println("JavaClient: XML-RPC Fault #" +
+            logger.error("JavaClient: XML-RPC Fault #" +
                     Integer.toString(exception.code) + ": " +
                     exception.toString());
         } catch (Exception exception) {
-            System.err.println("JavaClient: " + exception.toString());
+            logger.error("JavaClient: " + exception.toString());
         }
     }
 
