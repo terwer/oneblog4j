@@ -1,7 +1,5 @@
 package com.terwergreen.helper;
 
-import com.terwergreen.model.Post;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +37,7 @@ public class CSDNHelper extends BlogHelper{
     }
 
     @Override
-    public <T> List<T> getCategories(Map<String, Object> mappedParams) {
+    public <T> T getCategories(Map<String, Object> mappedParams) {
         return null;
     }
 

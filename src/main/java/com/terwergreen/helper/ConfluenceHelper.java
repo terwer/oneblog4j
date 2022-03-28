@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -232,13 +231,13 @@ public class ConfluenceHelper extends BlogHelper {
     }
 
     @Override
-    public <T> List<T> getCategories(Map<String, Object> mappedParams) {
+    public <T> T getCategories(Map<String, Object> mappedParams) {
         List<Object> pParams = new ArrayList<>();
         pParams.add("ds");
         pParams.add(this.getUsername());
         pParams.add(this.getPassword());
-        Object result = this.executeMeteweblog("metaWeblog.getCategories", pParams);
-        return null;
+        T result = (T) this.executeMeteweblog("metaWeblog.getCategories", pParams);
+        return result;
     }
 
     @Override

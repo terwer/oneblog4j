@@ -92,4 +92,13 @@ public class ConfluenceBlogHelperTest {
 
         blogHelper.editPost(mappedParams);
     }
+
+    @Test
+    public void test_confluence_getPost() {
+        BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(BlogTypeEnum.CONFLUENCE);
+        Map<String, Object> mappedParams = new HashMap<>();
+        Object result = blogHelper.getPost(mappedParams);
+
+        System.out.println("result = " + JSON.toJSONString(result));
+    }
 }

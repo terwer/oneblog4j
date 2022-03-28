@@ -1,6 +1,5 @@
 package com.terwergreen.helper;
 
-import com.terwergreen.model.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +56,14 @@ public class CnblogsHelper extends BlogHelper {
     }
 
     @Override
-    public <T> List<T> getCategories(Map<String, Object> mappedParams) {
-        return null;
+    public <T> T getCategories(Map<String, Object> mappedParams) {
+        List<Object> pParams = new ArrayList<>();
+        pParams.add("ds");
+        pParams.add(this.getUsername());
+        pParams.add(this.getPassword());
+        T result = (T) this.executeMeteweblog("metaWeblog.getCategories", pParams);
+        return result;
     }
-
     @Override
     public boolean newMediaObject(Map<String, Object> mappedParams) {
         return false;

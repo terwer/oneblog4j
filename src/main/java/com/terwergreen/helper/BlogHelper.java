@@ -1,6 +1,5 @@
 package com.terwergreen.helper;
 
-import com.terwergreen.model.Post;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.AsyncCallback;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -128,7 +127,7 @@ public abstract class BlogHelper {
 
     public abstract <T> List<T> getRecentPosts(Map<String, Object> mappedParams);
 
-    public abstract <T> List<T> getCategories(Map<String, Object> mappedParams);
+    public abstract <T> T getCategories(Map<String, Object> mappedParams);
 
     public abstract boolean newMediaObject(Map<String, Object> mappedParams);
     // ====================

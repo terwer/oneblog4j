@@ -17,4 +17,24 @@ public class ConfluenceDelegateHelper extends ConfluenceHelper {
     public Map<String, Object> getUsersBlogs() {
         return super.getUsersBlogs();
     }
+
+    @Override
+    public <T> T getCategories(Map<String, Object> mappedParams) {
+        return super.getCategories(mappedParams);
+    }
+
+    @Override
+    public <T> T getPost(Map<String, Object> mappedParams) {
+        return super.getPost(mappedParams);
+    }
+
+    @Override
+    public boolean newPost(Map<String, Object> mappedParams) {
+        return super.newPost(mappedParams);
+    }
+
+    @Override
+    public boolean editPost(Map<String, Object> mappedParams) {
+        return super.editPost(mappedParams);
+    }
 }

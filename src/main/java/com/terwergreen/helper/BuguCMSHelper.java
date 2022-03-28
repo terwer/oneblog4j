@@ -1,6 +1,5 @@
 package com.terwergreen.helper;
 
-import com.terwergreen.model.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public class BuguCMSHelper extends BlogHelper{
     }
 
     @Override
-    public <T> List<T> getCategories(Map<String, Object> mappedParams) {
+    public <T> T getCategories(Map<String, Object> mappedParams) {
         return null;
     }
 
