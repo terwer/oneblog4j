@@ -28,7 +28,7 @@ public class CnblogsHelper extends BlogHelper {
     }
 
     @Override
-    public boolean addPost(Post post) {
+    public boolean newPost(Map<String, Object> mappedParams) {
         List<String> pParams = new ArrayList<>();
         pParams.add("default");
         pParams.add(super.getUsername());
@@ -41,8 +41,28 @@ public class CnblogsHelper extends BlogHelper {
     }
 
     @Override
-    public boolean updatePost(Post post) {
+    public boolean editPost(Map<String, Object> mappedParams) {
         logger.debug("CnBlogs update Post");
+        return false;
+    }
+
+    @Override
+    public <T> T getPost(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> getRecentPosts(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> getCategories(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public boolean newMediaObject(Map<String, Object> mappedParams) {
         return false;
     }
 }

@@ -41,14 +41,34 @@ public class BuguCMSApiHelper extends BlogHelper {
     }
 
     @Override
-    public boolean addPost(Post post) {
+    public boolean newPost(Map<String, Object> mappedParams) {
         logger.debug("BuguCMS addPost");
         return false;
     }
 
     @Override
-    public boolean updatePost(Post post) {
+    public boolean editPost(Map<String, Object> mappedParams) {
         logger.debug("BuguCMS updatePost");
+        return false;
+    }
+
+    @Override
+    public <T> T getPost(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> getRecentPosts(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> getCategories(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public boolean newMediaObject(Map<String, Object> mappedParams) {
         return false;
     }
 }

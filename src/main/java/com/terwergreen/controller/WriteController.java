@@ -36,13 +36,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -124,7 +123,7 @@ public class WriteController implements Initializable {
 
         try {
             FileInputStream inputStream = new FileInputStream(postPath);
-            String content = readStream(inputStream);
+            String content = ResourceUtil.readStream(inputStream);
 
             txtWriteContent.setText(content);
 
@@ -170,20 +169,6 @@ public class WriteController implements Initializable {
 
     public void contentClicked(MouseEvent mouseEvent) {
         // 文字改变触发
-    }
-
-    public static String readStream(InputStream is) {
-        StringBuilder sb = new StringBuilder(512);
-        try {
-            Reader r = new InputStreamReader(is, "UTF-8");
-            int c = 0;
-            while ((c = r.read()) != -1) {
-                sb.append((char) c);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return sb.toString();
     }
 
     /**
@@ -241,7 +226,7 @@ public class WriteController implements Initializable {
         }
         BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(blogType);
 
-        Post post = new Post();
+        Map<String,Object> mappedParams = new HashMap<>();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("文章发布确认");
@@ -260,7 +245,7 @@ public class WriteController implements Initializable {
             logger.debug("null");
         } else if (option.get() == ButtonType.OK) {
 
-            blogHelper.addPost(post);
+            blogHelper.newPost(mappedParams);
             logger.debug("文章已发布");
 
             logger.debug("ok");

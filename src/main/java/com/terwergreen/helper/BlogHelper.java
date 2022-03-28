@@ -90,13 +90,12 @@ public abstract class BlogHelper {
             logger.error("JavaClient: " + exception.toString());
         }
     }
-
     // ====================
     // 通用api结束
     // ====================
 
     // ====================
-    // metaWeblogApi开始
+    // bloggerApi开始
     // ====================
     public Map<String, Object> getUsersBlogs() {
         List<String> pParams = new ArrayList<>();
@@ -114,10 +113,24 @@ public abstract class BlogHelper {
         logger.debug("blogger.getUsersBlogs=>");
         return userBlog;
     }
+    // ====================
+    // bloggerApi结束
+    // ====================
 
-    public abstract boolean addPost(Post post);
+    // ====================
+    // metaWeblogApi开始
+    // ====================
+    public abstract boolean newPost(Map<String, Object> mappedParams);
 
-    public abstract boolean updatePost(Post post);
+    public abstract boolean editPost(Map<String, Object> mappedParams);
+
+    public abstract <T> T getPost(Map<String, Object> mappedParams);
+
+    public abstract <T> List<T> getRecentPosts(Map<String, Object> mappedParams);
+
+    public abstract <T> List<T> getCategories(Map<String, Object> mappedParams);
+
+    public abstract boolean newMediaObject(Map<String, Object> mappedParams);
     // ====================
     // metaWeblogApi结束
     // ====================

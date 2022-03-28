@@ -6,5 +6,5 @@ package com.terwergreen.helper;
  * @description: BlogTypeEnum
  */
 public enum BlogTypeEnum {
-    CNBLOGS,BUGUCMS,CSDN,JIANSHU
+    CNBLOGS, BUGUCMS, BUGUCMS_API, CSDN, JIANSHU, CONFLUENCE, CONFLUENCE_DELEGATE
 }

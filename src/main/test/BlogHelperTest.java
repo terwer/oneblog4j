@@ -18,26 +18,23 @@ public class BlogHelperTest {
     private static Logger logger = LoggerFactory.getLogger(BlogHelperTest.class);
 
     @Test
-    public void testMetaWeblogApi_blogger_getUsersBlogs() {
+    public void test_cnblogs_getUsersBlogs() {
         BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(BlogTypeEnum.CNBLOGS);
         Map<String, Object> reaultMap = blogHelper.getUsersBlogs();
         logger.info("reaultMap = " + reaultMap);
     }
 
     @Test
-    public void testMetaWeblogApi_blogger_bugucms_getUsersBlogs() {
+    public void test_bugucms_getUsersBlogs() {
         BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(BlogTypeEnum.BUGUCMS);
         Map<String, Object> reaultMap = blogHelper.getUsersBlogs();
         logger.info("reaultMap = " + reaultMap);
     }
 
     @Test
-    public void testApi_blogger_getUsersBlogs() {
-        BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(BlogTypeEnum.BUGUCMS);
+    public void test_confluence_getUsersBlogs() {
+        BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(BlogTypeEnum.CONFLUENCE);
         Map<String, Object> reaultMap = blogHelper.getUsersBlogs();
-
         logger.info("reaultMap = " + reaultMap);
     }
-
-
 }
