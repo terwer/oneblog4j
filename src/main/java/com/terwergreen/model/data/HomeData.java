@@ -2,6 +2,7 @@ package com.terwergreen.model.data;
 
 import com.terwergreen.controller.HomeController;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 /**
@@ -19,6 +20,9 @@ public class HomeData {
 
     // 如果是vuepress的文章，解析元数据
     LinkedHashMap metadata;
+
+    // 注意：如果是列表跳转，这个字段是null
+    File selectedFile;
 
     public HomeController getFrom() {
         return from;
@@ -58,5 +62,13 @@ public class HomeData {
 
     public void setMetadata(LinkedHashMap metadata) {
         this.metadata = metadata;
+    }
+
+    public File getSelectedFile() {
+        return selectedFile;
+    }
+
+    public void setSelectedFile(File selectedFile) {
+        this.selectedFile = selectedFile;
     }
 }

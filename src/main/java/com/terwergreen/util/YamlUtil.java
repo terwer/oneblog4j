@@ -6,6 +6,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -39,22 +40,29 @@ public class YamlUtil {
         data.put("permalink", "/post/" + postSlug + ".html");
 
         // meta
-        Map keywordsMap = new HashMap();
+        LinkedHashMap keywordsMap = new LinkedHashMap();
         keywordsMap.put("name", "keywords");
         keywordsMap.put("content", StringUtils.join(keywords, " "));
-        Map descMap = new HashMap();
+        LinkedHashMap descMap = new LinkedHashMap();
         descMap.put("name", "description");
         descMap.put("content", description);
-        data.put("meta", new Map[]{keywordsMap, descMap});
+        ArrayList metaList = new ArrayList();
+        metaList.add(keywordsMap);
+        metaList.add(descMap);
+        data.put("meta", metaList);
 
         // categories
-        data.put("categories", cats);
+        if (null != cats) {
+            data.put("categories", Arrays.asList(cats));
+        }
 
         // tags
-        data.put("tags", keywords);
+        if (null != keywords) {
+            data.put("tags", Arrays.asList(keywords));
+        }
 
         // author
-        Map author1 = new HashMap();
+        LinkedHashMap author1 = new LinkedHashMap();
         author1.put("name", "terwer");
         author1.put("link", "https://github.com/terwer");
         data.put("author", author1);

@@ -103,6 +103,7 @@ public class SelectFileController implements Initializable {
                     homeData.setFrom(null);
                     homeData.setContent(sb.toString());
                     homeData.setMetadata(metadatMap);
+                    homeData.setSelectedFile(file);
 
                     // 打开编辑器
                     FXMLLoader loader = new FXMLLoader(ResourceUtil.getResourceAsURL("write.fxml"));

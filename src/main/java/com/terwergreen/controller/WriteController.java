@@ -1,11 +1,17 @@
 package com.terwergreen.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.terwergreen.helper.BlogHelper;
 import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
 import com.terwergreen.model.control.KeyValueItem;
 import com.terwergreen.model.data.HomeData;
+import com.terwergreen.util.HttpUtil;
 import com.terwergreen.util.ResourceUtil;
+import com.terwergreen.util.YamlUtil;
+import com.terwergreen.util.http.HttpClientResult;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -13,13 +19,20 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +46,14 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.ResourceBundle;
 
 /**
  * @author: terwer
@@ -74,6 +94,21 @@ public class WriteController implements Initializable {
 
     @FXML
     private Label lblRightStatus;
+
+    @FXML
+    private TextArea txtCat;
+
+    @FXML
+    private TextArea txtTag;
+
+    @FXML
+    private TextArea txtDesc;
+
+    @FXML
+    private TextArea txtSlug;
+
+    @FXML
+    private Button btnMetadata;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -150,6 +185,36 @@ public class WriteController implements Initializable {
      */
     private void setMetadata(LinkedHashMap metadata) {
         logger.info("解析metadata=>" + metadata);
+
+        // 分类
+        ArrayList<String> categories = (ArrayList<String>) metadata.get("categories");
+        txtCat.setText(StringUtils.join(categories, "_"));
+
+        // 标签
+        ArrayList<String> tags = (ArrayList<String>) metadata.get("tags");
+        txtTag.setText(StringUtils.join(tags, "_"));
+
+        // 别名
+        String permalink = (String) metadata.get("permalink");
+        permalink = permalink.replace("/post/", "");
+        permalink = permalink.replace(".html", "");
+        // permalink = permalink.replace("/pages/", "");
+        // permalink = permalink.replace("/", "");
+        txtSlug.setText(permalink);
+
+        // 描述
+        String desc = null;
+        ArrayList<LinkedHashMap<String, String>> meta = (ArrayList<LinkedHashMap<String, String>>) metadata.get("meta");
+        if (null != meta) {
+            for (LinkedHashMap<String, String> m : meta) {
+                if (null != m && null != m.get("name") && "description".equals(m.get("name"))) {
+                    desc = m.get("content");
+                    break;
+                }
+            }
+            txtDesc.setText(desc);
+        }
+
 
         lblLeftStatus.setText("ok");
     }
@@ -233,32 +298,57 @@ public class WriteController implements Initializable {
     public void pastePic(ActionEvent event) {
         Clipboard cb = Clipboard.getSystemClipboard();
         if (cb.hasImage()) {
-            logger.debug("处理粘贴图片");
-
-            Image img = cb.getImage();
-            // imageView.setImage(image);
-
-            java.util.Date dt = new java.util.Date(System.currentTimeMillis());
-            SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-            String fileName = fmt.format(dt);
-            Random rnd = new Random(MAX_IMAGE_NUM);
-            fileName = fileName + rnd.nextInt() + ".png";
-
-            String fileShortName = "oneblog-image-" + fileName;
-            String outPath = homeData.getFrom().getCurrentNoteImagesDir() + "/" +
-                    homeData.getMwebFileId().replace(".md", "") + "/"
-                    + fileShortName;
-            File file = new File(outPath);
-            try {
-                ImageIO.write(SwingFXUtils.fromFXImage(img, null), "PNG", file);
-
-                int caretPosition = txtWriteContent.getCaretPosition();
-                txtWriteContent.insertText(caretPosition, "![](media/" +
-                        homeData.getMwebFileId().replace(".md", "") + "/"
-                        + fileShortName + ")");
-            } catch (IOException e) {
-                e.printStackTrace();
+            logger.debug("处理粘贴图片，使用PicGO");
+            HttpClientResult result = HttpUtil.doPost("http://127.0.0.1:36677/upload");
+            if (200 == result.getCode()) {
+                JSONObject jsonObj = JSON.parseObject(result.getContent());
+                if (jsonObj.getBoolean("success")) {
+                    JSONArray imgArr = jsonObj.getJSONArray("result");
+                    for (Object img : imgArr) {
+                        String imgUrl = (String) img;
+                        int caretPosition = txtWriteContent.getCaretPosition();
+                        txtWriteContent.insertText(caretPosition, String.format("![](%s)", imgUrl));
+                    }
+                }
+                logger.info("result=>", result);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("错误信息");
+                alert.setHeaderText("图片上传错误=>" + result.getContent());
+                alert.showAndWait();
+                return;
             }
+
+//            Image img = cb.getImage();
+//            // imageView.setImage(image);
+//
+//            java.util.Date dt = new java.util.Date(System.currentTimeMillis());
+//            SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+//            String fileName = fmt.format(dt);
+//            Random rnd = new Random(MAX_IMAGE_NUM);
+//            fileName = fileName + rnd.nextInt() + ".png";
+//
+//            String fileShortName = "oneblog-image-" + fileName;
+//            String outPath = homeData.getFrom().getCurrentNoteImagesDir() + "/" +
+//                    homeData.getMwebFileId().replace(".md", "") + "/"
+//                    + fileShortName;
+//            File file = new File(outPath);
+//            try {
+//                ImageIO.write(SwingFXUtils.fromFXImage(img, null), "PNG", file);
+//
+//                int caretPosition = txtWriteContent.getCaretPosition();
+//                txtWriteContent.insertText(caretPosition, "![](media/" +
+//                        homeData.getMwebFileId().replace(".md", "") + "/"
+//                        + fileShortName + ")");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("错误信息");
+            alert.setHeaderText("剪贴板中没有图片");
+            alert.showAndWait();
+            return;
         }
     }
 
@@ -272,12 +362,27 @@ public class WriteController implements Initializable {
 
         Map<String, Object> mappedParams = new HashMap<>();
 
+        String content = txtWriteContent.getText();
+        // 设置元数据
+        String[] keywords = StringUtils.isEmpty(txtTag.getText()) ? null : txtTag.getText().split("_");
+        String description = txtDesc.getText();
+        String[] cats = StringUtils.isEmpty(txtTag.getText()) ? null : txtCat.getText().split("_");
+        LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats);
+        String metadata = YamlUtil.generateMetadata(data);
+        // logger.info("new metadata=>" + metadata);
+        StringBuilder sb = new StringBuilder();
+        sb.append(metadata);
+        sb.append("\n");
+        sb.append(content);
+
+        content = sb.toString();
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("文章发布确认");
         alert.setHeaderText("是否发布文章？");
-        alert.setContentText("文章信息：标题[" + txtPostTitle.getText() + "]\r\n" +
-                "分类[" + "]\r\n" +
-                "标签[" + "]\r\n"
+        alert.setContentText("文章信息：\r\n标题[" + txtPostTitle.getText() + "]\r\n" +
+                "分类[" + StringUtils.join(cats, ",") + "]\r\n" +
+                "标签[" + StringUtils.join(keywords, ",") + "]\r\n"
         );
 
         ButtonType show = new ButtonType("再看看");
@@ -305,13 +410,32 @@ public class WriteController implements Initializable {
     public void saveLocal(ActionEvent event) {
         String content = txtWriteContent.getText();
 
-        String noteDir = homeData.getFrom().getCurrentNoteDir();
-        String notePath = Paths.get(noteDir, "/" + homeData.getMwebFileId()).toString();
+        String notePath = null;
+        if (null != homeData.getFrom()) {
+            String noteDir = homeData.getFrom().getCurrentNoteDir();
+            notePath = Paths.get(noteDir, "/" + homeData.getMwebFileId()).toString();
+        } else {
+            notePath = homeData.getSelectedFile().getAbsolutePath();
+            // 设置元数据
+            String[] keywords = StringUtils.isEmpty(txtTag.getText()) ? null : txtTag.getText().split("_");
+            String description = txtDesc.getText();
+            String[] cats = StringUtils.isEmpty(txtTag.getText()) ? null : txtCat.getText().split("_");
+            LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats);
+            String metadata = YamlUtil.generateMetadata(data);
+            // logger.info("new metadata=>" + metadata);
+            StringBuilder sb = new StringBuilder();
+            sb.append(metadata);
+            sb.append("\n");
+            sb.append(content);
+
+            content = sb.toString();
+        }
 
         try {
-            writeTxtFile(notePath, content);
+            // writeTxtFile(notePath, content);
 
-            successMsg("保存成功：" + System.currentTimeMillis());
+            String hash = String.valueOf(System.currentTimeMillis());
+            successMsg("成功=>" + hash.substring(8));
         } catch (Exception e) {
             errorMsg(e.getMessage());
 
@@ -330,5 +454,31 @@ public class WriteController implements Initializable {
     private void errorMsg(String msg) {
         lblMsg.setText(msg);
         lblMsg.setTextFill(Color.color(1, 0, 0));
+    }
+
+    public void createMetadata(ActionEvent event) {
+        if (txtSlug.getText().contains("pages")) {
+            doCreateMetadata();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("元数据确认");
+            alert.setHeaderText("是否重新生成元数据？");
+            alert.setContentText("重新生成会覆盖现有的所有元数据信息，请谨慎操作。");
+            Optional<ButtonType> option = alert.showAndWait();
+            if (option.get() == ButtonType.OK) {
+                doCreateMetadata();
+            }
+        }
+    }
+
+    private void doCreateMetadata() {
+        logger.info("准备重新生成元数据");
+
+        LinkedHashMap<String, Object> data = YamlUtil.autoBuildMetaDataMap(txtPostTitle.getText(), txtWriteContent.getText());
+        this.setMetadata(data);
+
+        // String metadata = YamlUtil.generateMetadata(data);
+        // logger.info("new metadata=>" + metadata);
+        logger.info("创建元数据完毕");
     }
 }

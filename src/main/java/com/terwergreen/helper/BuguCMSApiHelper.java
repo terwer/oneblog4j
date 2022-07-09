@@ -29,7 +29,7 @@ public class BuguCMSApiHelper extends BlogHelper {
 
         // /site/config
         String url = this.getServerUrl() + "/site/config";
-        String resultString = HttpUtil.get(url);
+        String resultString = HttpUtil.doGet(url).getContent();
 
         JSONObject jsonObject = JSONObject.parseObject(resultString);
         //json对象转Map
