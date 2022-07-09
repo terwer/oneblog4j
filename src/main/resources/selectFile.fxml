@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="98.0" maxWidth="-Infinity" minHeight="98.0" minWidth="-Infinity" prefHeight="98.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.terwergreen.controller.SelectFileController">
+    <children>
+        <Button fx:id="btnSelectFile" layoutX="33.0" layoutY="32.0" mnemonicParsing="false" onAction="#selectFileClicked" text="浏览文件..." />
+    </children>
+</Pane>

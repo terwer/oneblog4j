@@ -4,7 +4,6 @@ import com.terwergreen.helper.BlogHelper;
 import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
 import com.terwergreen.model.data.HomeData;
-import com.terwergreen.model.Post;
 import com.terwergreen.util.ResourceUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +18,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -41,6 +41,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -58,8 +59,12 @@ public class WriteController implements Initializable {
     private static final int MAX_IMAGE_NUM = 10000;
     private HomeData homeData;
 
+    @Deprecated
     @FXML
     private Label lblPostTitle;
+
+    @FXML
+    private TextField txtPostTitle;
 
     @FXML
     private TextArea txtWriteContent;
@@ -81,6 +86,9 @@ public class WriteController implements Initializable {
 
     @FXML
     private Label lblMsg;
+
+    @FXML
+    private Label lblRightStatus;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -110,20 +118,49 @@ public class WriteController implements Initializable {
 
     public void initData(HomeData homeData) {
         this.homeData = homeData;
+        if (null != homeData.getFrom()) {
+            txtPostTitle.setText(homeData.getMwebFileId() + "|" + homeData.getPostTitle());
+        } else {
+            txtPostTitle.setText(homeData.getPostTitle());
+        }
 
-        lblPostTitle.setText(homeData.getMwebFileId() + "|" + homeData.getPostTitle());
+        if (null != homeData.getMetadata()) {
+            // 设置文章元数据
+            setMetadata(homeData.getMetadata());
+        }
 
         loadPost(homeData);
         // logger.debug(homeData.getFrom().getCurrentNoteDir());
     }
 
-    private void loadPost(HomeData homeData) {
-        String postPath = Paths.get(homeData.getFrom().getCurrentNoteDir(), "/", homeData.getMwebFileId()).toString();
-        // File file = new File(postPath);
+    /**
+     * {
+     * title=node发送邮件,
+     * date=Fri Jul 08 00:09:53 CST 2022,
+     * permalink=/post/node-send-mail.html,
+     * meta=[{name=keywords, content=node mail}, {name=description, content=node发送邮件。}],
+     * categories=[前端开发],
+     * tags=[node, mail],
+     * author={name=terwer, link=https://github.com/terwer}
+     * }
+     *
+     * @param metadata
+     */
+    private void setMetadata(LinkedHashMap metadata) {
+        logger.info("解析metadata=>" + metadata);
+    }
 
+    private void loadPost(HomeData homeData) {
         try {
-            FileInputStream inputStream = new FileInputStream(postPath);
-            String content = ResourceUtil.readStream(inputStream);
+            String content = "";
+            if (null != homeData.getFrom()) {
+                String postPath = Paths.get(homeData.getFrom().getCurrentNoteDir(), "/", homeData.getMwebFileId()).toString();
+                // File file = new File(postPath);
+                FileInputStream inputStream = new FileInputStream(postPath);
+                content = ResourceUtil.readStream(inputStream);
+            } else {
+                content = homeData.getContent();
+            }
 
             txtWriteContent.setText(content);
 
@@ -156,15 +193,19 @@ public class WriteController implements Initializable {
         content = content.replace("\n", "\\n");
         content = content.replace("\r", "\\r");
 
-        // 兼容自定义目录
-        content = content.replace("images/", homeData.getFrom().getCurrentNoteImagesDir() + "/");
+        if (null != homeData.getFrom()) {
+            // 兼容自定义目录
+            content = content.replace("images/", homeData.getFrom().getCurrentNoteImagesDir() + "/");
 
-        // 兼容MWeb
-        content = content.replace("media/", homeData.getFrom().getCurrentNoteDir() + "/media/");
+            // 兼容MWeb
+            content = content.replace("media/", homeData.getFrom().getCurrentNoteDir() + "/media/");
+        }
 
         // logger.debug("content = " + content);
 
         engine.executeScript("if(typeof setEditorValue != 'undefined'){window.editorContentMD='" + content + "';setEditorValue(window.editorContentMD);}");
+
+        lblRightStatus.setText("ready");
     }
 
     public void contentClicked(MouseEvent mouseEvent) {
@@ -226,12 +267,12 @@ public class WriteController implements Initializable {
         }
         BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(blogType);
 
-        Map<String,Object> mappedParams = new HashMap<>();
+        Map<String, Object> mappedParams = new HashMap<>();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("文章发布确认");
         alert.setHeaderText("是否发布文章？");
-        alert.setContentText("文章信息：标题[" + lblPostTitle.getText() + "]\r\n" +
+        alert.setContentText("文章信息：标题[" + txtPostTitle.getText() + "]\r\n" +
                 "分类[" + "]\r\n" +
                 "标签[" + "]\r\n"
         );
