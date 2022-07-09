@@ -1,7 +1,13 @@
 package com.terwergreen.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.github.slugify.Slugify;
 import com.terwergreen.constant.Constants;
 import com.terwergreen.controller.WriteController;
+import com.terwergreen.util.http.HttpClientResult;
+import javafx.scene.control.Alert;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -26,7 +33,7 @@ import java.util.Map;
  **/
 public class YamlUtil {
     private static Logger logger = LoggerFactory.getLogger(YamlUtil.class);
-
+    private static final Slugify slg = new Slugify();
     /**
      * 生成元数据Map
      *
@@ -91,7 +98,23 @@ public class YamlUtil {
         String desc = null;
 
         if (null == oldSlug) {
+            HttpClientResult result = HttpUtil.doGet("https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=auto&tl=en-US&q=" + postTitle);
+            if (200 == result.getCode()) {
+                logger.info("result=>", result);
+                JSONArray resultArray = JSON.parseArray(result.getContent());
+                JSONArray transInfo = resultArray.getJSONArray(0);
+                String transText = transInfo.getString(0);
 
+                final String newSlug = slg.slugify(transText);
+                slug = newSlug;
+                System.out.println("新的别名=>" + newSlug);
+            } else {
+                slug = oldSlug;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("错误信息");
+                alert.setHeaderText("谷歌翻译服务出错=>" + result.getContent());
+                alert.showAndWait();
+            }
         } else {
             slug = oldSlug;
         }

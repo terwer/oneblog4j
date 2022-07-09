@@ -64,29 +64,49 @@ public class SelectFileController implements Initializable {
             String key = file.getName();
 
             try {
-                StringBuilder sb = new StringBuilder();
-                StringBuilder metadataSb = new StringBuilder();
                 List<String> allLines = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);
                 if (CollectionUtils.isNotEmpty(allLines)) {
+                    StringBuilder sb = new StringBuilder();
+                    StringBuilder metadataSb = new StringBuilder();
+
                     String postTitle = allLines.get(0);
                     boolean hasTitle = false;
+                    boolean titleEnd = false;
+                    int yamlTagCount = 0;
                     for (int i = 0; i < allLines.size(); i++) {
-                        if (allLines.get(i).startsWith("#")
-                                && hasTitle == false) {
-                            postTitle = allLines.get(i).split(" ")[1];
-                            hasTitle = true;
-                            logger.info("标题：" + postTitle);
+                        String line = allLines.get(i);
+                        // 累计元数据与正文
+                        if (titleEnd == true) {
+                            // 正文
+                            sb.append(line);
+                            sb.append("\n");
+                        } else {
+                            // 元数据
+                            metadataSb.append(line);
+                            metadataSb.append("\n");
                         }
 
-                        if (hasTitle == false) {
-                            metadataSb.append(allLines.get(i));
-                            metadataSb.append("\n");
-                        } else {
-                            sb.append(allLines.get(i));
-                            sb.append("\n");
+                        // 分割线
+                        if (line.startsWith("---")) {
+                            yamlTagCount++;
+                        }
+
+                        // 取标题
+                        // 正文的第一个#号
+                        if (titleEnd == true && hasTitle == false && line.startsWith("#")) {
+                            if ("#".equals(line.split(" ")[0])) {
+                                postTitle = line.split(" ")[1];
+                                hasTitle = true;
+                                logger.info("找到了标题：" + postTitle);
+                            }
+                        }
+
+                        // 修复没有写标题的情况
+                        if (yamlTagCount == 2) {
+                            // 这里是为了防止解析不到内容
+                            titleEnd = true;
                         }
                     }
-                    hasTitle = false;
 
                     Yaml yaml = new Yaml();
                     String input = metadataSb.toString();
@@ -98,11 +118,26 @@ public class SelectFileController implements Initializable {
                         }
                     }
 
+                    // 数据组装
+                    String postTitleData = null == metadatMap.get("title") ? postTitle : metadatMap.get("title").toString();
+                    String postContentData = null;
+                    if (hasTitle == false) {
+                        logger.info("修复缺失的标题：" + postTitle);
+                        StringBuilder contentSb = new StringBuilder();
+                        contentSb.append("# ");
+                        contentSb.append(postTitleData);
+                        contentSb.append("\n");
+                        contentSb.append(sb.toString());
+                        postContentData = contentSb.toString();
+                    } else {
+                        postContentData = sb.toString();
+                    }
+
                     HomeData homeData = new HomeData();
                     homeData.setMwebFileId(key);
-                    homeData.setPostTitle(null == metadatMap.get("title") ? postTitle : metadatMap.get("title").toString());
+                    homeData.setPostTitle(postTitleData);
                     homeData.setFrom(null);
-                    homeData.setContent(sb.toString());
+                    homeData.setContent(postContentData);
                     homeData.setMetadata(metadatMap);
                     homeData.setSelectedFile(file);
 

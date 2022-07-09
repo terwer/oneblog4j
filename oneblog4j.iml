@@ -69,11 +69,12 @@
     <orderEntry type="library" name="Maven: org.apache.pdfbox:xmpbox:2.0.8" level="project" />
     <orderEntry type="library" name="Maven: de.rototor.pdfbox:graphics2d:0.12" level="project" />
     <orderEntry type="library" name="Maven: com.openhtmltopdf:openhtmltopdf-rtl-support:0.0.1-RC13" level="project" />
-    <orderEntry type="library" name="Maven: com.ibm.icu:icu4j:59.1" level="project" />
     <orderEntry type="library" name="Maven: com.openhtmltopdf:openhtmltopdf-jsoup-dom-converter:0.0.1-RC13" level="project" />
     <orderEntry type="library" name="Maven: com.vladsch.flexmark:flexmark-profile-pegdown:0.34.58" level="project" />
     <orderEntry type="library" name="Maven: com.vladsch.flexmark:flexmark-util:0.34.58" level="project" />
     <orderEntry type="library" name="Maven: com.vladsch.flexmark:flexmark-youtrack-converter:0.34.58" level="project" />
+    <orderEntry type="library" name="Maven: com.github.slugify:slugify:2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.ibm.icu:icu4j:60.1" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.10" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.10" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.33" level="project" />
