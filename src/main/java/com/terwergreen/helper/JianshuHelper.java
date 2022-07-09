@@ -1,7 +1,7 @@
 package com.terwergreen.helper;
 
-import com.terwergreen.model.Post;
-
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -17,12 +17,32 @@ public class JianshuHelper extends BlogHelper {
     }
 
     @Override
-    public boolean addPost(Post post) {
+    public boolean newPost(Map<String, Object> mappedParams) {
         return false;
     }
 
     @Override
-    public boolean updatePost(Post post) {
+    public boolean editPost(Map<String, Object> mappedParams) {
+        return false;
+    }
+
+    @Override
+    public <T> T getPost(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> getRecentPosts(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public <T> T getCategories(Map<String, Object> mappedParams) {
+        return null;
+    }
+
+    @Override
+    public boolean newMediaObject(Map<String, Object> mappedParams) {
         return false;
     }
 }

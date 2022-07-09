@@ -46,7 +46,7 @@ JavaFX(JDK1.8集成在JDK了，JDK11因为依赖第三方库版本问题，暂�
 
 优点：可纯后台运行
 
-缺点：部分网站不可用
+缺点：部分网站不可用，比如使用Vue或者React写的非服务端渲染的页面，抓取不到真正的html，html是由js引擎动态生成的，比如CSDN
 
 参考我的另一个项目：
 
@@ -64,4 +64,4 @@ https://github.com/geekerteam/simulation-login
 
 # TODO
 
-- [ ] 统一日志框架
+- [x] 统一日志框架

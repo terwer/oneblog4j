@@ -1,11 +1,9 @@
 package com.terwergreen.controller;
 
-import com.terwergreen.App;
-import com.terwergreen.model.HomeData;
-import com.terwergreen.model.Post;
 import com.terwergreen.helper.BlogHelper;
 import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
+import com.terwergreen.model.data.HomeData;
 import com.terwergreen.util.ResourceUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,6 +18,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -28,6 +27,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -35,14 +36,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -53,11 +53,18 @@ import java.util.ResourceBundle;
  * @description: WriteController
  */
 public class WriteController implements Initializable {
+
+    private static Logger logger = LoggerFactory.getLogger(WriteController.class);
+
     private static final int MAX_IMAGE_NUM = 10000;
     private HomeData homeData;
 
+    @Deprecated
     @FXML
     private Label lblPostTitle;
+
+    @FXML
+    private TextField txtPostTitle;
 
     @FXML
     private TextArea txtWriteContent;
@@ -80,6 +87,9 @@ public class WriteController implements Initializable {
     @FXML
     private Label lblMsg;
 
+    @FXML
+    private Label lblRightStatus;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ToggleGroup group = new ToggleGroup();
@@ -92,15 +102,15 @@ public class WriteController implements Initializable {
             WebEngine engine = webPreview.getEngine();
             reloadPreview(engine, content);
 
-            System.out.println("内容已同步");
-            // System.out.println("文字改变");
+            logger.debug("内容已同步");
+            // logger.debug("文字改变");
         });
 
 //        txtWriteContent.addEventFilter(KEY_TYPED, event -> {
 //            final String s = event.getCharacter();
 //            char c = s.charAt(0);
 //            if (c >= '\u0021' && c <= '\u007E') {
-//                System.out.println("接收粘贴");
+//                logger.debug("接收粘贴");
 //                event.consume();
 //            }
 //        });
@@ -108,20 +118,49 @@ public class WriteController implements Initializable {
 
     public void initData(HomeData homeData) {
         this.homeData = homeData;
+        if (null != homeData.getFrom()) {
+            txtPostTitle.setText(homeData.getMwebFileId() + "|" + homeData.getPostTitle());
+        } else {
+            txtPostTitle.setText(homeData.getPostTitle());
+        }
 
-        lblPostTitle.setText(homeData.getPostTitle());
+        if (null != homeData.getMetadata()) {
+            // 设置文章元数据
+            setMetadata(homeData.getMetadata());
+        }
 
         loadPost(homeData);
-        // System.out.println(homeData.getFrom().getCurrentNoteDir());
+        // logger.debug(homeData.getFrom().getCurrentNoteDir());
+    }
+
+    /**
+     * {
+     * title=node发送邮件,
+     * date=Fri Jul 08 00:09:53 CST 2022,
+     * permalink=/post/node-send-mail.html,
+     * meta=[{name=keywords, content=node mail}, {name=description, content=node发送邮件。}],
+     * categories=[前端开发],
+     * tags=[node, mail],
+     * author={name=terwer, link=https://github.com/terwer}
+     * }
+     *
+     * @param metadata
+     */
+    private void setMetadata(LinkedHashMap metadata) {
+        logger.info("解析metadata=>" + metadata);
     }
 
     private void loadPost(HomeData homeData) {
-        String postPath = Paths.get(homeData.getFrom().getCurrentNoteDir(), "/", homeData.getPostTitle()).toString();
-        // File file = new File(postPath);
-
         try {
-            FileInputStream inputStream = new FileInputStream(postPath);
-            String content = readStream(inputStream);
+            String content = "";
+            if (null != homeData.getFrom()) {
+                String postPath = Paths.get(homeData.getFrom().getCurrentNoteDir(), "/", homeData.getMwebFileId()).toString();
+                // File file = new File(postPath);
+                FileInputStream inputStream = new FileInputStream(postPath);
+                content = ResourceUtil.readStream(inputStream);
+            } else {
+                content = homeData.getContent();
+            }
 
             txtWriteContent.setText(content);
 
@@ -154,33 +193,23 @@ public class WriteController implements Initializable {
         content = content.replace("\n", "\\n");
         content = content.replace("\r", "\\r");
 
-        // 兼容自定义目录
-        content = content.replace("images/", homeData.getFrom().getCurrentNoteImagesDir() + "/");
+        if (null != homeData.getFrom()) {
+            // 兼容自定义目录
+            content = content.replace("images/", homeData.getFrom().getCurrentNoteImagesDir() + "/");
 
-        // 兼容MWeb
-        content = content.replace("media/", homeData.getFrom().getCurrentNoteDir() + "/media/");
+            // 兼容MWeb
+            content = content.replace("media/", homeData.getFrom().getCurrentNoteDir() + "/media/");
+        }
 
-        // System.out.println("content = " + content);
+        // logger.debug("content = " + content);
 
         engine.executeScript("if(typeof setEditorValue != 'undefined'){window.editorContentMD='" + content + "';setEditorValue(window.editorContentMD);}");
+
+        lblRightStatus.setText("ready");
     }
 
     public void contentClicked(MouseEvent mouseEvent) {
         // 文字改变触发
-    }
-
-    public static String readStream(InputStream is) {
-        StringBuilder sb = new StringBuilder(512);
-        try {
-            Reader r = new InputStreamReader(is, "UTF-8");
-            int c = 0;
-            while ((c = r.read()) != -1) {
-                sb.append((char) c);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return sb.toString();
     }
 
     /**
@@ -200,7 +229,7 @@ public class WriteController implements Initializable {
     public void pastePic(ActionEvent event) {
         Clipboard cb = Clipboard.getSystemClipboard();
         if (cb.hasImage()) {
-            System.out.println("处理粘贴图片");
+            logger.debug("处理粘贴图片");
 
             Image img = cb.getImage();
             // imageView.setImage(image);
@@ -211,14 +240,18 @@ public class WriteController implements Initializable {
             Random rnd = new Random(MAX_IMAGE_NUM);
             fileName = fileName + rnd.nextInt() + ".png";
 
-            String fileShortName = "image-" + fileName;
-            String outPath = homeData.getFrom().getCurrentNoteImagesDir() + "/" + fileShortName;
+            String fileShortName = "oneblog-image-" + fileName;
+            String outPath = homeData.getFrom().getCurrentNoteImagesDir() + "/" +
+                    homeData.getMwebFileId().replace(".md", "") + "/"
+                    + fileShortName;
             File file = new File(outPath);
             try {
                 ImageIO.write(SwingFXUtils.fromFXImage(img, null), "PNG", file);
 
                 int caretPosition = txtWriteContent.getCaretPosition();
-                txtWriteContent.insertText(caretPosition, "![](images/" + fileShortName + ")");
+                txtWriteContent.insertText(caretPosition, "![](media/" +
+                        homeData.getMwebFileId().replace(".md", "") + "/"
+                        + fileShortName + ")");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -234,12 +267,12 @@ public class WriteController implements Initializable {
         }
         BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(blogType);
 
-        Post post = new Post();
+        Map<String, Object> mappedParams = new HashMap<>();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("文章发布确认");
         alert.setHeaderText("是否发布文章？");
-        alert.setContentText("文章信息：标题[" + lblPostTitle.getText() + "]\r\n" +
+        alert.setContentText("文章信息：标题[" + txtPostTitle.getText() + "]\r\n" +
                 "分类[" + "]\r\n" +
                 "标签[" + "]\r\n"
         );
@@ -250,19 +283,19 @@ public class WriteController implements Initializable {
         Optional<ButtonType> option = alert.showAndWait();
 
         if (option.get() == null) {
-            System.out.println("null");
+            logger.debug("null");
         } else if (option.get() == ButtonType.OK) {
 
-            blogHelper.addPost(post);
-            System.out.println("文章已发布");
+            blogHelper.newPost(mappedParams);
+            logger.debug("文章已发布");
 
-            System.out.println("ok");
+            logger.debug("ok");
         } else if (option.get() == ButtonType.CANCEL) {
-            System.out.println("cancel");
+            logger.debug("cancel");
         } else if (option.get() == show) {
-            System.out.println("show");
+            logger.debug("show");
         } else {
-            System.out.println("else");
+            logger.debug("else");
         }
     }
 
@@ -270,7 +303,7 @@ public class WriteController implements Initializable {
         String content = txtWriteContent.getText();
 
         String noteDir = homeData.getFrom().getCurrentNoteDir();
-        String notePath = Paths.get(noteDir, "/" + lblPostTitle.getText()).toString();
+        String notePath = Paths.get(noteDir, "/" + homeData.getMwebFileId()).toString();
 
         try {
             writeTxtFile(notePath, content);
@@ -282,7 +315,7 @@ public class WriteController implements Initializable {
             e.printStackTrace();
         }
 
-        System.out.println("文件已保存到：" + notePath);
+        logger.debug("文件已保存到：" + notePath);
     }
 
     private void successMsg(String msg) {

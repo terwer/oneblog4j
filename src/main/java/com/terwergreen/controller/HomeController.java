@@ -1,7 +1,7 @@
 package com.terwergreen.controller;
 
-import com.terwergreen.App;
-import com.terwergreen.model.HomeData;
+import com.terwergreen.model.control.KeyValueItem;
+import com.terwergreen.model.data.HomeData;
 import com.terwergreen.util.ResourceUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,11 +18,18 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -31,6 +38,8 @@ import java.util.ResourceBundle;
  * @description:
  */
 public class HomeController implements Initializable {
+
+    private static Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     // =================================
     // 自定义目录
@@ -47,10 +56,10 @@ public class HomeController implements Initializable {
     private static final String DEFAULT_DIR = MWEB_DEFAULT_DIR;
     private String MWEB_NOTE_DIR = "";
     private String NOTE_DIR = MWEB_NOTE_DIR;
-    private String MWEB_NOTE_IMAGES_DIR = "images";
+    private String MWEB_NOTE_IMAGES_DIR = "media";
     private String NOTE_IMAGES_DIR = MWEB_NOTE_IMAGES_DIR;
     // ==================================
-    // =================================
+    // ==================================
 
     public String getCurrentDir() {
         return currentDir;
@@ -84,7 +93,7 @@ public class HomeController implements Initializable {
     private TextArea txtLogTextArea;
 
     @FXML
-    private ListView<String> listNoteList;
+    private ListView<KeyValueItem> listNoteList;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -100,7 +109,7 @@ public class HomeController implements Initializable {
 
     // 注意：构造函数在初始化之前，不能访问控件
     public HomeController() {
-        // System.out.println("主界面构造完毕");
+        // logger.debug("主界面构造完毕");
     }
 
     public void chooseFileClicked(ActionEvent event) {
@@ -125,7 +134,7 @@ public class HomeController implements Initializable {
     }
 
     public void btnNoteDirItemClicked(ActionEvent event) {
-        // System.out.println("目录点击事件");
+        // logger.debug("目录点击事件");
         ComboBox<String> item = (ComboBox<String>) event.getSource();
 
         if (null == item.getValue()) {
@@ -164,7 +173,7 @@ public class HomeController implements Initializable {
             ) {
                 continue;
             }
-            // System.out.println(dir.getName());
+            // logger.debug(dir.getName());
             btnNoteDir.getItems().addAll(dir.getName());
         }
 
@@ -197,8 +206,8 @@ public class HomeController implements Initializable {
             }
 
             String note = noteItem.getName();
-            String noteFile = Paths.get(getCurrentNoteDir(), note).toString();
-            String imageDir = getCurrentNoteImagesDir();
+            // String noteFile = Paths.get(getCurrentNoteDir(), note).toString();
+            // String imageDir = getCurrentNoteImagesDir();
 
             // 目录完毕
             // log(null, "note=>" + note);
@@ -207,8 +216,21 @@ public class HomeController implements Initializable {
             // log(null,"note image dir " + getCurrentNoteImagesDir());
             // log(null,"===============================");
 
+            try {
+                List<String> allLines = Files.readAllLines(Paths.get(getCurrentNoteDir(), note), StandardCharsets.UTF_8);
+                if (CollectionUtils.isNotEmpty(allLines)) {
+                    note = allLines.get(0);
+                    logger.info("第一行：" + allLines.get(0));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             // 开始处理数据绑定
-            listNoteList.getItems().add(note);
+            KeyValueItem<String,String> item = new KeyValueItem<>();
+            item.setKey(noteItem.getName());
+            item.setValue(note);
+            listNoteList.getItems().add(item);
         }
         log(null, "笔记数据绑定成功");
     }
@@ -220,12 +242,14 @@ public class HomeController implements Initializable {
 
     public void onListNotesClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
-            String currentItemSelected = listNoteList.getSelectionModel()
+            KeyValueItem<String,String> currentItemSelected = listNoteList.getSelectionModel()
                     .getSelectedItem();
-            // System.out.println("currentItemSelected = " + currentItemSelected);
+            String noteFileId =  currentItemSelected.getKey();
+            // logger.debug("currentItemSelected = " + currentItemSelected);
 
             HomeData homeData = new HomeData();
-            homeData.setPostTitle(currentItemSelected);
+            homeData.setMwebFileId(currentItemSelected.getKey());
+            homeData.setPostTitle(currentItemSelected.getValue());
             homeData.setFrom(this);
 
             try {
@@ -251,10 +275,9 @@ public class HomeController implements Initializable {
     }
 
     private void log(Object source, String msg) {
-        String logText = "[" + source + "]:" + msg + "\r\n";
-        if (null == source) {
-            logText = msg + "\r\n";
-        }
-        txtLogTextArea.appendText(logText);
+        String logText = "[" + source + "]:" + msg;
+        txtLogTextArea.appendText(logText + "\r\n");
+
+        logger.debug(logText);
     }
 }

@@ -59,6 +59,8 @@ import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.CharArrayBuffer;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * http工具类
@@ -71,6 +73,9 @@ import org.apache.hc.core5.util.Timeout;
  * @date: 2022-01-20 15:10
  **/
 public class HttpUtil {
+    
+    private static Logger logger = LoggerFactory.getLogger(HttpUtil.class);
+    
     private static PoolingHttpClientConnectionManager connManager = null;
     private static CookieStore cookieStore = null;
     private static CredentialsProvider credentialsProvider = null;
@@ -212,10 +217,10 @@ public class HttpUtil {
             context.setCookieStore(cookieStore);
             context.setCredentialsProvider(credentialsProvider);
 
-            System.out.println("Executing request " + httpget.getMethod() + " " + httpget.getUri());
+            logger.debug("Executing request " + httpget.getMethod() + " " + httpget.getUri());
             try (final CloseableHttpResponse response = httpclient.execute(httpget, context)) {
-                System.out.println("----------------------------------------");
-                System.out.println(response.getCode() + " " + response.getReasonPhrase());
+                logger.debug("----------------------------------------");
+                logger.debug(response.getCode() + " " + response.getReasonPhrase());
                 String resEntityToString = EntityUtils.toString(response.getEntity(), "utf-8");
 
                 // Once the request has been executed the local context can
@@ -246,6 +251,6 @@ public class HttpUtil {
 
     public static void main(String[] args) {
         String result = HttpUtil.get("https://www.baidu.com");
-        System.out.println("result = " + result);
+        logger.debug("result = " + result);
     }
 }

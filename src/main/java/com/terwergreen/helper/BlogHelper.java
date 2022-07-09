@@ -1,13 +1,17 @@
 package com.terwergreen.helper;
 
-import com.terwergreen.model.Post;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.AsyncCallback;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: terwer
@@ -15,6 +19,9 @@ import java.util.*;
  * @description: BlogHelper
  */
 public abstract class BlogHelper {
+
+    private static Logger logger = LoggerFactory.getLogger(BlogHelper.class);
+
     private String serverUrl;
     private String username;
     private String password;
@@ -53,11 +60,11 @@ public abstract class BlogHelper {
             // Call the server, and get our result.
             result = client.execute(pMethodName, pParams);
         } catch (XmlRpcException exception) {
-            System.err.println("JavaClient: XML-RPC Fault #" +
+            logger.error("JavaClient: XML-RPC Fault #" +
                     Integer.toString(exception.code) + ": " +
                     exception.toString());
         } catch (Exception exception) {
-            System.err.println("JavaClient: " + exception.toString());
+            logger.error("JavaClient: " + exception.toString());
         }
         return result;
     }
@@ -75,20 +82,19 @@ public abstract class BlogHelper {
             // Call the server, and get our result.
             client.executeAsync(pMethodName, pParams, pCallback);
         } catch (XmlRpcException exception) {
-            System.err.println("JavaClient: XML-RPC Fault #" +
+            logger.error("JavaClient: XML-RPC Fault #" +
                     Integer.toString(exception.code) + ": " +
                     exception.toString());
         } catch (Exception exception) {
-            System.err.println("JavaClient: " + exception.toString());
+            logger.error("JavaClient: " + exception.toString());
         }
     }
-
     // ====================
     // 通用api结束
     // ====================
 
     // ====================
-    // metaWeblogApi开始
+    // bloggerApi开始
     // ====================
     public Map<String, Object> getUsersBlogs() {
         List<String> pParams = new ArrayList<>();
@@ -103,13 +109,27 @@ public abstract class BlogHelper {
             userBlog = (HashMap<String, Object>) result[0];
         }
 
-        System.out.println("blogger.getUsersBlogs=>");
+        logger.debug("blogger.getUsersBlogs=>");
         return userBlog;
     }
+    // ====================
+    // bloggerApi结束
+    // ====================
 
-    public abstract boolean addPost(Post post);
+    // ====================
+    // metaWeblogApi开始
+    // ====================
+    public abstract boolean newPost(Map<String, Object> mappedParams);
 
-    public abstract boolean updatePost(Post post);
+    public abstract boolean editPost(Map<String, Object> mappedParams);
+
+    public abstract <T> T getPost(Map<String, Object> mappedParams);
+
+    public abstract <T> List<T> getRecentPosts(Map<String, Object> mappedParams);
+
+    public abstract <T> T getCategories(Map<String, Object> mappedParams);
+
+    public abstract boolean newMediaObject(Map<String, Object> mappedParams);
     // ====================
     // metaWeblogApi结束
     // ====================
