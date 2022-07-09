@@ -1,27 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.web.WebView?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 
-<VBox prefHeight="960.0" prefWidth="1536.0" stylesheets="@Application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.terwergreen.controller.WriteController">
+<VBox prefHeight="560.0" prefWidth="1200.0" stylesheets="@Application.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.terwergreen.controller.WriteController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -64,7 +50,7 @@
     </MenuBar>
     <SplitPane dividerPositions="0.10462842242503259, 0.5309647979139505" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane prefHeight="907.0" prefWidth="175.0">
+        <AnchorPane prefHeight="700.0" prefWidth="157.0">
           <children>
             <Label alignment="CENTER" layoutX="10.0" layoutY="14.0" style="&#10;" text="发布" textAlignment="CENTER" wrapText="false">
               <font>
@@ -74,34 +60,23 @@
                 <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <TitledPane fx:id="txtBlogType" animated="true" layoutX="11.0" layoutY="40.0" prefHeight="235.0" prefWidth="133.0" text="发布平台">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="209.0" prefWidth="126.0">
-                           <children>
-                              <RadioButton layoutX="4.0" layoutY="78.0" mnemonicParsing="false" text="Wordpress" />
-                              <RadioButton fx:id="rdCnblogs" layoutX="4.0" layoutY="56.0" mnemonicParsing="false" selected="true" text="CnBlogs" />
-                              <RadioButton fx:id="rdBuguCMS" layoutX="5.0" layoutY="33.0" mnemonicParsing="false" text="JVue4" />
-                              <RadioButton fx:id="fdConf" layoutX="5.0" layoutY="10.0" mnemonicParsing="false" text="Confluence" />
-                           </children>
-                        </AnchorPane>
-                    </content>
-                  </TitledPane>
-                  <Button layoutX="9.0" layoutY="862.0" mnemonicParsing="false" onAction="#btnPublish" prefHeight="31.0" prefWidth="128.0" text="发布" textAlignment="CENTER">
+                  <Button layoutX="13.0" layoutY="398.0" mnemonicParsing="false" onAction="#btnPublish" prefHeight="32.0" prefWidth="103.0" text="发布" textAlignment="CENTER">
                      <font>
                         <Font size="24.0" />
                      </font></Button>
-                  <Button fx:id="btnPastePic" layoutX="12.0" layoutY="765.0" mnemonicParsing="false" onAction="#pastePic" text="插入剪贴板图片" />
-                  <Button fx:id="btnSaveLocal" layoutX="12.0" layoutY="821.0" mnemonicParsing="false" onAction="#saveLocal" prefHeight="31.0" prefWidth="133.0" text="保存到本地" />
-                  <Label fx:id="lblMsg" layoutX="13.0" layoutY="699.0" text="操作信息" />
-                  <TextArea fx:id="txtTag" layoutX="7.0" layoutY="426.0" prefHeight="49.0" prefWidth="139.0" />
-                  <TextArea fx:id="txtSlug" layoutX="12.0" layoutY="622.0" prefHeight="55.0" prefWidth="133.0" />
-                  <Label layoutX="10.0" layoutY="397.0" text="标签" />
-                  <Label layoutX="10.0" layoutY="599.0" text="别名" />
-                  <TextArea fx:id="txtDesc" layoutX="8.0" layoutY="517.0" prefHeight="69.0" prefWidth="139.0" />
-                  <Label layoutX="10.0" layoutY="485.0" text="描述" />
-                  <Button fx:id="btnPastePic1" layoutX="12.0" layoutY="728.0" mnemonicParsing="false" onAction="#pastePic" text="自动生成元数据" />
-                  <TextArea fx:id="txtCat" layoutX="8.0" layoutY="330.0" prefHeight="49.0" prefWidth="139.0" />
-                  <Label layoutX="9.0" layoutY="298.0" text="分类" />
+                  <Button fx:id="btnPastePic" layoutX="10.0" layoutY="504.0" mnemonicParsing="false" onAction="#pastePic" prefHeight="32.0" prefWidth="110.0" text="剪贴板图片" />
+                  <Button fx:id="btnSaveLocal" layoutX="10.0" layoutY="543.0" mnemonicParsing="false" onAction="#saveLocal" prefHeight="6.0" prefWidth="119.0" text="保存到本地" />
+                  <Label fx:id="lblMsg" layoutX="14.0" layoutY="436.0" text="操作信息" />
+                  <TextArea fx:id="txtTag" layoutX="8.0" layoutY="192.0" prefHeight="49.0" prefWidth="110.0" />
+                  <TextArea fx:id="txtSlug" layoutX="9.0" layoutY="342.0" prefHeight="46.0" prefWidth="110.0" />
+                  <Label layoutX="10.0" layoutY="163.0" text="标签" />
+                  <Label layoutX="10.0" layoutY="319.0" text="别名" />
+                  <TextArea fx:id="txtDesc" layoutX="8.0" layoutY="269.0" prefHeight="46.0" prefWidth="110.0" />
+                  <Label layoutX="10.0" layoutY="245.0" text="描述" />
+                  <Button fx:id="btnPastePic1" layoutX="10.0" layoutY="465.0" mnemonicParsing="false" onAction="#pastePic" prefHeight="32.0" prefWidth="110.0" text="自动元数据" />
+                  <TextArea fx:id="txtCat" layoutX="8.0" layoutY="110.0" prefHeight="46.0" prefWidth="110.0" />
+                  <Label layoutX="9.0" layoutY="78.0" text="分类" />
+                  <ComboBox fx:id="cmbBlogType" layoutX="12.0" layoutY="34.0" onAction="#cmbBlogTypeItemClicked" prefHeight="30.0" prefWidth="110.0" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="907.0" prefWidth="140.0">
@@ -109,16 +84,16 @@
             <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0">
               <children>
                 <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="写作" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                        <TextArea fx:id="txtWriteContent" layoutX="14.0" layoutY="104.0" onMouseClicked="#contentClicked" prefHeight="779.0" prefWidth="608.0" />
-                        <TextField fx:id="txtPostTitle" layoutX="14.0" layoutY="48.0" prefHeight="25.0" prefWidth="604.0" />
+                        <TextArea fx:id="txtWriteContent" layoutX="14.0" layoutY="104.0" onMouseClicked="#contentClicked" prefHeight="480.0" prefWidth="460.0" />
+                        <TextField fx:id="txtPostTitle" layoutX="14.0" layoutY="48.0" prefHeight="30.0" prefWidth="460.0" />
               </children>
             </AnchorPane>
           </content>
         </ScrollPane>
-        <AnchorPane prefWidth="648.0">
+        <AnchorPane prefWidth="480.0">
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="预览" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                  <WebView fx:id="webPreview" layoutX="10.0" layoutY="42.0" prefHeight="840.0" prefWidth="680.0" />
+                  <WebView fx:id="webPreview" layoutX="10.0" layoutY="42.0" prefHeight="480.0" prefWidth="535.0" />
           </children>
         </AnchorPane>
       </items>

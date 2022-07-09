@@ -227,9 +227,7 @@ public class HomeController implements Initializable {
             }
 
             // 开始处理数据绑定
-            KeyValueItem<String,String> item = new KeyValueItem<>();
-            item.setKey(noteItem.getName());
-            item.setValue(note);
+            KeyValueItem<String, String> item = new KeyValueItem<>(noteItem.getName(), note);
             listNoteList.getItems().add(item);
         }
         log(null, "笔记数据绑定成功");
@@ -242,9 +240,9 @@ public class HomeController implements Initializable {
 
     public void onListNotesClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
-            KeyValueItem<String,String> currentItemSelected = listNoteList.getSelectionModel()
+            KeyValueItem<String, String> currentItemSelected = listNoteList.getSelectionModel()
                     .getSelectedItem();
-            String noteFileId =  currentItemSelected.getKey();
+            String noteFileId = currentItemSelected.getKey();
             // logger.debug("currentItemSelected = " + currentItemSelected);
 
             HomeData homeData = new HomeData();

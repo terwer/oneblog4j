@@ -3,6 +3,7 @@ package com.terwergreen.controller;
 import com.terwergreen.helper.BlogHelper;
 import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
+import com.terwergreen.model.control.KeyValueItem;
 import com.terwergreen.model.data.HomeData;
 import com.terwergreen.util.ResourceUtil;
 import javafx.beans.value.ChangeListener;
@@ -12,15 +13,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
@@ -40,12 +33,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * @author: terwer
@@ -76,25 +64,28 @@ public class WriteController implements Initializable {
     private Button btnPastePic;
 
     @FXML
-    private TitledPane txtBlogType;
-
-    @FXML
-    private RadioButton rdCnblogs;
-
-    @FXML
-    private RadioButton rdBuguCMS;
+    private ComboBox<KeyValueItem<BlogTypeEnum, String>> cmbBlogType;
 
     @FXML
     private Label lblMsg;
+
+    @FXML
+    private Label lblLeftStatus;
 
     @FXML
     private Label lblRightStatus;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ToggleGroup group = new ToggleGroup();
-        rdBuguCMS.setToggleGroup(group);
-        rdCnblogs.setToggleGroup(group);
+        List<KeyValueItem<BlogTypeEnum, String>> typeList = new ArrayList<>();
+        typeList.add(new KeyValueItem<>(BlogTypeEnum.CNBLOGS, "博客园"));
+        typeList.add(new KeyValueItem<>(BlogTypeEnum.BUGUCMS, "JVue4"));
+        typeList.add(new KeyValueItem<>(BlogTypeEnum.CONFLUENCE_DELEGATE, "Confluence"));
+        cmbBlogType.getItems().addAll(typeList);
+        // 自动选择第一个
+        cmbBlogType.getSelectionModel().select(0);
+        ActionEvent event = new ActionEvent(cmbBlogType, null);
+        cmbBlogTypeItemClicked(event);
 
         txtWriteContent.textProperty().addListener((observableValue, oldValue, newValue) -> {
             String content = txtWriteContent.getText();
@@ -114,6 +105,17 @@ public class WriteController implements Initializable {
 //                event.consume();
 //            }
 //        });
+    }
+
+    @FXML
+    private void cmbBlogTypeItemClicked(ActionEvent event) {
+        // logger.debug("目录点击事件");
+        ComboBox<KeyValueItem<BlogTypeEnum, String>> item = (ComboBox<KeyValueItem<BlogTypeEnum, String>>) event.getSource();
+        if (null == item.getValue()) {
+            return;
+        }
+
+        logger.info("当前选择的平台是：" + item.getSelectionModel().getSelectedItem().getValue());
     }
 
     public void initData(HomeData homeData) {
@@ -148,6 +150,8 @@ public class WriteController implements Initializable {
      */
     private void setMetadata(LinkedHashMap metadata) {
         logger.info("解析metadata=>" + metadata);
+
+        lblLeftStatus.setText("ok");
     }
 
     private void loadPost(HomeData homeData) {
@@ -260,11 +264,10 @@ public class WriteController implements Initializable {
 
     public void btnPublish(ActionEvent event) {
         BlogTypeEnum blogType = BlogTypeEnum.CNBLOGS;
-        if (rdCnblogs.isSelected()) {
-            blogType = BlogTypeEnum.CNBLOGS;
-        } else {
-            blogType = BlogTypeEnum.BUGUCMS;
-        }
+
+        KeyValueItem<BlogTypeEnum, String> selectedItem = cmbBlogType.getSelectionModel().getSelectedItem();
+        blogType = selectedItem.getKey();
+
         BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(blogType);
 
         Map<String, Object> mappedParams = new HashMap<>();
