@@ -110,6 +110,20 @@ public class WriteController implements Initializable {
     @FXML
     private Button btnMetadata;
 
+    @FXML
+    private Label lblBlogPlantform;
+
+    @FXML
+    Label lblPublishStatus;
+
+    @FXML
+    private Label lblSyncStatus;
+
+    // 文章是否发布
+    private boolean isPublish = false;
+    // 是否同步文章信息
+    private boolean isSync = false;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         List<KeyValueItem<BlogTypeEnum, String>> typeList = new ArrayList<>();
@@ -140,6 +154,12 @@ public class WriteController implements Initializable {
 //                event.consume();
 //            }
 //        });
+
+        // 默认状态
+        isPublish = false;
+        lblPublishStatus.setTextFill(Color.color(1, 0, 0));
+        isSync = false;
+        lblSyncStatus.setTextFill(Color.color(1, 0, 0));
     }
 
     @FXML
@@ -150,6 +170,7 @@ public class WriteController implements Initializable {
             return;
         }
 
+        lblBlogPlantform.setText("[" + item.getSelectionModel().getSelectedItem().getValue() + "]");
         logger.info("当前选择的平台是：" + item.getSelectionModel().getSelectedItem().getValue());
     }
 
@@ -496,5 +517,13 @@ public class WriteController implements Initializable {
         // String metadata = YamlUtil.generateMetadata(data);
         // logger.info("new metadata=>" + metadata);
         logger.info("创建元数据完毕");
+    }
+
+    public void refreshPublishStatus(ActionEvent event) {
+        logger.info("开始刷新发布状态");
+
+        isSync = true;
+        lblSyncStatus.setText("已同步");
+        lblSyncStatus.setTextFill(Color.color(32 / 255f, 168 / 255f, 92 / 255f));
     }
 }

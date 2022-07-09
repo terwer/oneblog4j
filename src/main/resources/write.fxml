@@ -99,6 +99,10 @@
                         <TextField fx:id="txtPostTitle" layoutX="12.0" layoutY="37.0" prefHeight="30.0" prefWidth="460.0" />
                         <TextArea fx:id="txtSlug" layoutX="14.0" layoutY="99.0" prefHeight="42.0" prefWidth="456.0" />
                         <Label layoutX="14.0" layoutY="73.0" text="别名" />
+                        <Label fx:id="lblPublishStatus" layoutX="56.0" layoutY="14.0" text="未发布" />
+                        <Button fx:id="btnRefreshPublishStatus" layoutX="291.0" layoutY="4.0" mnemonicParsing="false" onAction="#refreshPublishStatus" prefHeight="31.0" prefWidth="122.0" text="刷新发布信息" />
+                        <Label fx:id="lblSyncStatus" layoutX="426.0" layoutY="14.0" text="未同步" />
+                        <Label fx:id="lblBlogPlantform" layoutX="109.0" layoutY="14.0" text="[博客园]" />
               </children>
             </AnchorPane>
           </content>
