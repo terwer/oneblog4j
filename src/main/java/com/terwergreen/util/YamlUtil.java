@@ -1,14 +1,27 @@
 package com.terwergreen.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.github.slugify.Slugify;
+import com.terwergreen.constant.Constants;
+import com.terwergreen.controller.WriteController;
+import com.terwergreen.util.http.HttpClientResult;
+import javafx.scene.control.Alert;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -19,6 +32,8 @@ import java.util.Map;
  * @date: 2022-07-09 14:04
  **/
 public class YamlUtil {
+    private static Logger logger = LoggerFactory.getLogger(YamlUtil.class);
+    private static final Slugify slg = new Slugify();
     /**
      * 生成元数据Map
      *
@@ -39,22 +54,29 @@ public class YamlUtil {
         data.put("permalink", "/post/" + postSlug + ".html");
 
         // meta
-        Map keywordsMap = new HashMap();
+        LinkedHashMap keywordsMap = new LinkedHashMap();
         keywordsMap.put("name", "keywords");
         keywordsMap.put("content", StringUtils.join(keywords, " "));
-        Map descMap = new HashMap();
+        LinkedHashMap descMap = new LinkedHashMap();
         descMap.put("name", "description");
         descMap.put("content", description);
-        data.put("meta", new Map[]{keywordsMap, descMap});
+        ArrayList metaList = new ArrayList();
+        metaList.add(keywordsMap);
+        metaList.add(descMap);
+        data.put("meta", metaList);
 
         // categories
-        data.put("categories", cats);
+        if (null != cats) {
+            data.put("categories", new ArrayList<>(Arrays.asList(cats)));
+        }
 
         // tags
-        data.put("tags", keywords);
+        if (null != keywords) {
+            data.put("tags", new ArrayList<>(Arrays.asList(keywords)));
+        }
 
         // author
-        Map author1 = new HashMap();
+        LinkedHashMap author1 = new LinkedHashMap();
         author1.put("name", "terwer");
         author1.put("link", "https://github.com/terwer");
         data.put("author", author1);
@@ -67,10 +89,53 @@ public class YamlUtil {
      *
      * @param postTitle
      * @param postContent
+     * @param keywords
+     * @param cats
      * @return
      */
-    public static LinkedHashMap<String, Object> autoBuildMetaDataMap(String postTitle, String postContent) {
-        return buildMetaDataMap(postTitle, postTitle, null, null, null);
+    public static LinkedHashMap<String, Object> autoBuildMetaDataMap(String postTitle, String postContent, String[] keywords, String[] cats, String oldSlug, String oldDesc) {
+        String slug = null;
+        String desc = null;
+
+        if (null == oldSlug) {
+            HttpClientResult result = HttpUtil.doGet("https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=auto&tl=en-US&q=" + postTitle);
+            if (200 == result.getCode()) {
+                logger.info("result=>", result);
+                JSONArray resultArray = JSON.parseArray(result.getContent());
+                JSONArray transInfo = resultArray.getJSONArray(0);
+                String transText = transInfo.getString(0);
+
+                final String newSlug = slg.slugify(transText);
+                slug = newSlug;
+                System.out.println("新的别名=>" + newSlug);
+            } else {
+                slug = oldSlug;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("错误信息");
+                alert.setHeaderText("谷歌翻译服务出错=>" + result.getContent());
+                alert.showAndWait();
+            }
+        } else {
+            slug = oldSlug;
+        }
+
+        // markdown转换为html
+        String html = MarkdownUtil.md2html(postContent);
+        if (null == oldDesc) {
+            // 截取摘要
+            String filteredHtml = HtmlUtil.parseHtml(html, Constants.MAX_PREVIEW_LENGTH);
+            desc = filteredHtml.replace("...", "");
+        } else {
+            desc = oldDesc;
+        }
+
+        // 解析图片
+        List<String> thumbnails = ImageUtil.getImgSrc(html);
+        for (String thumbnail : thumbnails) {
+            logger.info("提取到缩略图=>" + thumbnail);
+        }
+
+        return buildMetaDataMap(postTitle, slug, keywords, desc, cats);
     }
 
     /**

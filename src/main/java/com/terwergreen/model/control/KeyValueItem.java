@@ -31,4 +31,9 @@ public class KeyValueItem<K, V> {
     public String toString() {
         return this.value.toString();
     }
+
+    public KeyValueItem(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
 }

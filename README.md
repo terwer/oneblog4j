@@ -4,7 +4,23 @@ JavaFX实现的自动发布笔记到博客平台的客户端
 # 目标
 1、一键发布文章到博客园，自动读取Typra/MWeb目录，自动上传图片 ⭐️⭐️⭐️⭐️⭐️
 
-2、其他平台：CSDN、简书等 ️⭐️
+2、其他平台：Confluence、Wordpress、CSDN、简书、以及metaweblog api兼容的平台等 ️⭐️
+
+3、统一日志框架 ⭐️⭐️⭐️⭐️⭐️
+
+4、支持metaWeblogAPI，并开发其他平台适配器（目前已经支持Confluence） ⭐️⭐️⭐️⭐️⭐️
+
+5、支持打开vuepress的md文件，并读取yaml元数据 ⭐️⭐️⭐️⭐️⭐️
+
+6、适配1024*600以上的分辨率 ⭐️⭐️⭐️
+
+7、自动截取备注 ⭐️⭐️⭐️⭐️⭐️
+
+8、处理剪贴板图片，配合PigGO ⭐️⭐️⭐️⭐️⭐️
+
+9、自动生成标签，自动修复缺失标题 ⭐️⭐️⭐️⭐️⭐️
+
+10、根据文章发布状态进行文章发布与更新，集成Spring Data JPA，配合MySQL实现跨平台状态共享 ⭐️⭐
 
 # 相关技术
 
@@ -14,11 +30,21 @@ Maven3.8.4
 
 JavaFX(JDK1.8集成在JDK了，JDK11因为依赖第三方库版本问题，暂不支持)
 
+flexmark0.34.58
+
+slugify2.2
+
+snakeyaml1.30
+
+xmlrpc-client3.1.3
+
+fastjson1.2.79
+
 # 问题
 
 目前实现自动发布文章有这么几个方案
 
-## 1、metaWeblogAPI
+## 1、metaWeblogAPI（推荐）
 
 这个可以无缝集成，但是很多平台已经关闭了这个API，目前只有 cnblogs 还是可用状态
 
@@ -27,6 +53,8 @@ JavaFX(JDK1.8集成在JDK了，JDK11因为依赖第三方库版本问题，暂�
 优点：可纯后台运行
 
 缺点：目前仅仅博客园可用
+
+更新：目前做了适配器，完美解决了问题，此方案最终采用
 
 ## 2、JSON API
 
@@ -65,3 +93,17 @@ https://github.com/geekerteam/simulation-login
 # TODO
 
 - [x] 统一日志框架
+
+- [x] 支持metaWeblogAPI，并开发其他平台适配器（目前已经支持Confluence）
+
+- [x] 支持打开vuepress的md文件，并读取yaml元数据
+
+- [x] 适配1024*600以上的分辨率
+
+- [x] 自动截取备注
+
+- [x] 处理剪贴板图片，配合PigGO
+
+- [x] 自动生成标签，自动修复缺失标题
+
+- [ ] 根据文章发布状态进行文章发布与更新，集成Spring Data JPA，配合MySQL实现跨平台状态共享

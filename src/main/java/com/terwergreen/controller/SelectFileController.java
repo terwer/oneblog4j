@@ -1,8 +1,5 @@
 package com.terwergreen.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.sun.codemodel.internal.JNullType;
-import com.terwergreen.model.control.KeyValueItem;
 import com.terwergreen.model.data.HomeData;
 import com.terwergreen.util.ResourceUtil;
 import javafx.event.ActionEvent;
@@ -30,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -68,26 +64,47 @@ public class SelectFileController implements Initializable {
             String key = file.getName();
 
             try {
-                StringBuilder sb = new StringBuilder();
-                StringBuilder metadataSb = new StringBuilder();
                 List<String> allLines = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);
                 if (CollectionUtils.isNotEmpty(allLines)) {
+                    StringBuilder sb = new StringBuilder();
+                    StringBuilder metadataSb = new StringBuilder();
+
                     String postTitle = allLines.get(0);
                     boolean hasTitle = false;
+                    boolean titleEnd = false;
+                    int yamlTagCount = 0;
                     for (int i = 0; i < allLines.size(); i++) {
-                        if (allLines.get(i).startsWith("#")
-                                && hasTitle == false) {
-                            postTitle = allLines.get(i).split(" ")[1];
-                            hasTitle = true;
-                            logger.info("标题：" + postTitle);
+                        String line = allLines.get(i);
+                        // 累计元数据与正文
+                        if (titleEnd == true) {
+                            // 正文
+                            sb.append(line);
+                            sb.append("\n");
+                        } else {
+                            // 元数据
+                            metadataSb.append(line);
+                            metadataSb.append("\n");
                         }
 
-                        if (hasTitle == false) {
-                            metadataSb.append(allLines.get(i));
-                            metadataSb.append("\n");
-                        } else {
-                            sb.append(allLines.get(i));
-                            sb.append("\n");
+                        // 分割线
+                        if (line.startsWith("---")) {
+                            yamlTagCount++;
+                        }
+
+                        // 取标题
+                        // 正文的第一个#号
+                        if (titleEnd == true && hasTitle == false && line.startsWith("#")) {
+                            if ("#".equals(line.split(" ")[0])) {
+                                postTitle = line.split(" ")[1];
+                                hasTitle = true;
+                                logger.info("找到了标题：" + postTitle);
+                            }
+                        }
+
+                        // 修复没有写标题的情况
+                        if (yamlTagCount == 2) {
+                            // 这里是为了防止解析不到内容
+                            titleEnd = true;
                         }
                     }
 
@@ -95,18 +112,34 @@ public class SelectFileController implements Initializable {
                     String input = metadataSb.toString();
                     LinkedHashMap metadatMap = new LinkedHashMap();
                     for (Object data : yaml.loadAll(input)) {
-                       if(null != data){
-                           metadatMap = (LinkedHashMap) data;
-                           break;
-                       }
+                        if (null != data) {
+                            metadatMap = (LinkedHashMap) data;
+                            break;
+                        }
+                    }
+
+                    // 数据组装
+                    String postTitleData = null == metadatMap.get("title") ? postTitle : metadatMap.get("title").toString();
+                    String postContentData = null;
+                    if (hasTitle == false) {
+                        logger.info("修复缺失的标题：" + postTitle);
+                        StringBuilder contentSb = new StringBuilder();
+                        contentSb.append("# ");
+                        contentSb.append(postTitleData);
+                        contentSb.append("\n");
+                        contentSb.append(sb.toString());
+                        postContentData = contentSb.toString();
+                    } else {
+                        postContentData = sb.toString();
                     }
 
                     HomeData homeData = new HomeData();
                     homeData.setMwebFileId(key);
-                    homeData.setPostTitle(postTitle);
+                    homeData.setPostTitle(postTitleData);
                     homeData.setFrom(null);
-                    homeData.setContent(sb.toString());
+                    homeData.setContent(postContentData);
                     homeData.setMetadata(metadatMap);
+                    homeData.setSelectedFile(file);
 
                     // 打开编辑器
                     FXMLLoader loader = new FXMLLoader(ResourceUtil.getResourceAsURL("write.fxml"));
