@@ -43,7 +43,7 @@ public class HomeController implements Initializable {
 
     // =================================
     // MWeb目录
-    private static final String MWEB_DEFAULT_DIR = "/Users/terwer/Documents/MWebLibrary";
+    private static final String MWEB_DEFAULT_DIR = "/Users/terwer/同步空间/cross/MWeb/MWebLibrary";
     private static final String DEFAULT_DIR = MWEB_DEFAULT_DIR;
     private String MWEB_NOTE_DIR = "";
     private String NOTE_DIR = MWEB_NOTE_DIR;
