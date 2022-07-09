@@ -86,20 +86,21 @@ public class SelectFileController implements Initializable {
                             sb.append("\n");
                         }
                     }
+                    hasTitle = false;
 
                     Yaml yaml = new Yaml();
                     String input = metadataSb.toString();
                     LinkedHashMap metadatMap = new LinkedHashMap();
                     for (Object data : yaml.loadAll(input)) {
-                       if(null != data){
-                           metadatMap = (LinkedHashMap) data;
-                           break;
-                       }
+                        if (null != data) {
+                            metadatMap = (LinkedHashMap) data;
+                            break;
+                        }
                     }
 
                     HomeData homeData = new HomeData();
                     homeData.setMwebFileId(key);
-                    homeData.setPostTitle(postTitle);
+                    homeData.setPostTitle(null == metadatMap.get("title") ? postTitle : metadatMap.get("title").toString());
                     homeData.setFrom(null);
                     homeData.setContent(sb.toString());
                     homeData.setMetadata(metadatMap);

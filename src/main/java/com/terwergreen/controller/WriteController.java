@@ -187,12 +187,16 @@ public class WriteController implements Initializable {
         logger.info("解析metadata=>" + metadata);
 
         // 分类
-        ArrayList<String> categories = (ArrayList<String>) metadata.get("categories");
-        txtCat.setText(StringUtils.join(categories, "_"));
+        if (null != metadata.get("categories")) {
+            ArrayList<String> categories = (ArrayList<String>) metadata.get("categories");
+            txtCat.setText(StringUtils.join(categories, "_"));
+        }
 
         // 标签
-        ArrayList<String> tags = (ArrayList<String>) metadata.get("tags");
-        txtTag.setText(StringUtils.join(tags, "_"));
+        if (null != metadata.get("tags")) {
+            ArrayList<String> tags = (ArrayList<String>) metadata.get("tags");
+            txtTag.setText(StringUtils.join(tags, "_"));
+        }
 
         // 别名
         String permalink = (String) metadata.get("permalink");
@@ -432,7 +436,7 @@ public class WriteController implements Initializable {
         }
 
         try {
-            // writeTxtFile(notePath, content);
+            writeTxtFile(notePath, content);
 
             String hash = String.valueOf(System.currentTimeMillis());
             successMsg("成功=>" + hash.substring(8));
@@ -458,23 +462,35 @@ public class WriteController implements Initializable {
 
     public void createMetadata(ActionEvent event) {
         if (txtSlug.getText().contains("pages")) {
-            doCreateMetadata();
+            doCreateMetadata(null, null);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("元数据确认");
             alert.setHeaderText("是否重新生成元数据？");
             alert.setContentText("重新生成会覆盖现有的所有元数据信息，请谨慎操作。");
+            ButtonType showSlug = new ButtonType("仅生成别名");
+            alert.getButtonTypes().add(showSlug);
+            ButtonType showDesc = new ButtonType("仅生成备注");
+            alert.getButtonTypes().add(showDesc);
             Optional<ButtonType> option = alert.showAndWait();
             if (option.get() == ButtonType.OK) {
-                doCreateMetadata();
+                doCreateMetadata(null, null);
+            } else if (option.get() == showSlug) {
+                doCreateMetadata(null, txtDesc.getText());
+            } else if (option.get() == showDesc) {
+                doCreateMetadata(txtSlug.getText(), null);
             }
         }
     }
 
-    private void doCreateMetadata() {
+    private void doCreateMetadata(String oldSlug, String oldDesc) {
         logger.info("准备重新生成元数据");
 
-        LinkedHashMap<String, Object> data = YamlUtil.autoBuildMetaDataMap(txtPostTitle.getText(), txtWriteContent.getText());
+        LinkedHashMap<String, Object> data = YamlUtil.autoBuildMetaDataMap(txtPostTitle.getText(),
+                txtWriteContent.getText(), txtTag.getText().split("_"),
+                txtCat.getText().split("_"),
+                oldSlug, oldDesc
+        );
         this.setMetadata(data);
 
         // String metadata = YamlUtil.generateMetadata(data);

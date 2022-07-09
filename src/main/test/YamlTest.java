@@ -15,7 +15,8 @@ public class YamlTest {
     public void testDump() {
 //        LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap("node发送邮件", "node-send-mail",
 //                new String[]{"node", "mail"}, "node发送邮件。", new String[]{"前端开发"});
-        LinkedHashMap<String, Object> data = YamlUtil.autoBuildMetaDataMap("node发送邮件", "node发送邮件内容。");
+        LinkedHashMap<String, Object> data = YamlUtil.autoBuildMetaDataMap("node发送邮件", "node发送邮件内容。",
+                new String[]{"node", "mail"}, new String[]{"前端开发"});
         String metadata = YamlUtil.generateMetadata(data);
         System.out.println(metadata);
     }
