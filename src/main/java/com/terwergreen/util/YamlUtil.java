@@ -109,7 +109,7 @@ public class YamlUtil {
         String slug = null;
         String desc = null;
 
-        if (null == oldSlug) {
+        if (null == oldSlug || oldSlug.startsWith("/pages/")) {
             String q = null;
             try {
                 q = URLEncoder.encode(postTitle, "UTF-8");
