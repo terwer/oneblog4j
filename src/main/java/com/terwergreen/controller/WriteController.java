@@ -28,6 +28,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -331,8 +332,12 @@ public class WriteController implements Initializable {
                         txtWriteContent.insertText(caretPosition, String.format("![](%s)", imgUrl));
                     }
                 }
+                String hash = String.valueOf(System.currentTimeMillis());
+                successMsg("成功=>" + hash.substring(8));
                 logger.info("result=>", result);
             } else {
+                String hash = String.valueOf(System.currentTimeMillis());
+                successMsg("错误=>" + hash.substring(8));
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("错误信息");
                 alert.setHeaderText("图片上传错误=>" + result.getContent());
@@ -374,21 +379,12 @@ public class WriteController implements Initializable {
     }
 
     public void btnPublish(ActionEvent event) {
-        BlogTypeEnum blogType = BlogTypeEnum.CNBLOGS;
-
-        KeyValueItem<BlogTypeEnum, String> selectedItem = cmbBlogType.getSelectionModel().getSelectedItem();
-        blogType = selectedItem.getKey();
-
-        BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(blogType);
-
-        Map<String, Object> mappedParams = new HashMap<>();
-
         String content = txtWriteContent.getText();
         // 设置元数据
         String[] keywords = StringUtils.isEmpty(txtTag.getText()) ? null : txtTag.getText().split("_");
         String description = txtDesc.getText();
         String[] cats = StringUtils.isEmpty(txtTag.getText()) ? null : txtCat.getText().split("_");
-        LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats, null);
+        LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText().toLowerCase(), txtSlug.getText(), keywords, description, cats, null);
         String metadata = YamlUtil.generateMetadata(data);
         // logger.info("new metadata=>" + metadata);
         StringBuilder sb = new StringBuilder();
@@ -406,25 +402,34 @@ public class WriteController implements Initializable {
                 "标签[" + StringUtils.join(keywords, ",") + "]\r\n"
         );
 
-        ButtonType show = new ButtonType("再看看");
-        alert.getButtonTypes().add(show);
-
+        // ButtonType show = new ButtonType("再看看");
+        // alert.getButtonTypes().add(show);
         Optional<ButtonType> option = alert.showAndWait();
-
         if (option.get() == null) {
             logger.debug("null");
         } else if (option.get() == ButtonType.OK) {
+            if (!isSync) {
+                Alert noSyncAlert = new Alert(Alert.AlertType.ERROR, "文章状态未同步，请同步后再保存！", ButtonType.OK);
+                noSyncAlert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                noSyncAlert.show();
+                return;
+            }
 
-            blogHelper.newPost(mappedParams);
+            BlogTypeEnum blogType = BlogTypeEnum.CNBLOGS;
+            KeyValueItem<BlogTypeEnum, String> selectedItem = cmbBlogType.getSelectionModel().getSelectedItem();
+            blogType = selectedItem.getKey();
+            BlogHelper blogHelper = BlogHelperFactory.getBlogHelper(blogType);
+            Map<String, Object> mappedParams = new HashMap<>();
+            // blogHelper.newPost(mappedParams);
             logger.debug("文章已发布");
-
-            logger.debug("ok");
         } else if (option.get() == ButtonType.CANCEL) {
-            logger.debug("cancel");
-        } else if (option.get() == show) {
-            logger.debug("show");
-        } else {
-            logger.debug("else");
+            logger.debug("已取消发布");
+        }
+        // else if (option.get() == show) {
+        //     logger.debug("再看看");
+        // }
+        else {
+            logger.debug("未操作");
         }
     }
 
@@ -442,7 +447,7 @@ public class WriteController implements Initializable {
             String description = txtDesc.getText();
             String[] cats = StringUtils.isEmpty(txtTag.getText()) ? null : txtCat.getText().split("_");
             String oldDatestr = DateUtil.parseDatestr(homeData.getMetadata().get("date"));
-            LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats, oldDatestr);
+            LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText().toLowerCase(), txtSlug.getText(), keywords, description, cats, oldDatestr);
             String metadata = YamlUtil.generateMetadata(data);
             // logger.info("new metadata=>" + metadata);
             StringBuilder sb = new StringBuilder();
@@ -515,6 +520,8 @@ public class WriteController implements Initializable {
         // String metadata = YamlUtil.generateMetadata(data);
         // logger.info("new metadata=>" + metadata);
         logger.info("创建元数据完毕");
+        String hash = String.valueOf(System.currentTimeMillis());
+        successMsg("成功=>" + hash.substring(8));
     }
 
     public void refreshPublishStatus(ActionEvent event) {

@@ -17,8 +17,9 @@ public class HtmlUtil {
         html = html.replaceAll("<.*?>", "");
         html = html.replaceAll("<.*?", "");
         html = html.replaceAll("\\n", "");
-        html = html.replaceAll("&quot;", "");
-        html = html.replaceAll(" ", "");
+        html = html.replaceAll("\\t", "");
+        html = html.replace("&quot;", "");
+        html = html.replace(" ", "");
         html = html.replace(":", "");
         html = html.replace(";", "");
         html = html.replace(",", "");
@@ -31,6 +32,7 @@ public class HtmlUtil {
         html = html.replace("+", "");
         html = html.replace("=", "");
         html = html.replace("-", "");
+        html = html.toLowerCase();
         return (html);
     }
 
