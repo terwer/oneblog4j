@@ -169,8 +169,8 @@ public class YamlUtil {
         options.setPrettyFlow(true);
         options.setIndicatorIndent(2);
         options.setIndentWithIndicator(true);
-        // options.setTimeZone(TimeZone.getTimeZone("GMT-8:00"));
-        options.setTimeZone(TimeZone.getTimeZone("UTC"));
+        options.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        // options.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         // 数据导出
         Yaml yaml = new Yaml(options);
@@ -184,7 +184,7 @@ public class YamlUtil {
         // 先转成小写，防止错误替换
         String result = yamlSb.toString()
                 .replaceAll("T", " ")
-                .replace("Z", "");
+                .replace("+08:00", "");
 
         return result;
     }
