@@ -1,7 +1,9 @@
 package com.terwergreen.controller;
 
 import com.terwergreen.model.data.HomeData;
+import com.terwergreen.util.DateUtil;
 import com.terwergreen.util.ResourceUtil;
+import com.terwergreen.util.yaml.DateTimeImplicitContructor;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +20,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +28,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -108,7 +112,8 @@ public class SelectFileController implements Initializable {
                         }
                     }
 
-                    Yaml yaml = new Yaml();
+                    // Yaml yaml = new Yaml();
+                    Yaml yaml = new Yaml(new DateTimeImplicitContructor());
                     String input = metadataSb.toString();
                     LinkedHashMap metadatMap = new LinkedHashMap();
                     for (Object data : yaml.loadAll(input)) {
@@ -132,6 +137,10 @@ public class SelectFileController implements Initializable {
                     } else {
                         postContentData = sb.toString();
                     }
+
+//                    Date cdate =  (Date)metadatMap.getOrDefault("date",new Date());
+//                    String datestr = DateUtil.parseDatestr(cdate);
+//                    metadatMap.put("date", datestr);
 
                     HomeData homeData = new HomeData();
                     homeData.setMwebFileId(key);

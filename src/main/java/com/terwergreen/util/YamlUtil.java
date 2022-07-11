@@ -12,15 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Yaml工具类
@@ -115,7 +110,15 @@ public class YamlUtil {
         String desc = null;
 
         if (null == oldSlug) {
-            HttpClientResult result = HttpUtil.doGet("https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=auto&tl=en-US&q=" + postTitle);
+            String q = null;
+            try {
+                q = URLEncoder.encode(postTitle, "UTF-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String reqUrl = "https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=auto&tl=en-US&q=" + q;
+            logger.error("google reqUrl=>" + reqUrl);
+            HttpClientResult result = HttpUtil.doGet(reqUrl);
             if (200 == result.getCode()) {
                 logger.info("result=>", result);
                 JSONArray resultArray = JSON.parseArray(result.getContent());

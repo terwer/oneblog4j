@@ -3,6 +3,7 @@ package com.terwergreen.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.slugify.Slugify;
 import com.terwergreen.helper.BlogHelper;
 import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
@@ -60,6 +61,7 @@ import java.util.ResourceBundle;
 public class WriteController implements Initializable {
 
     private static Logger logger = LoggerFactory.getLogger(WriteController.class);
+    private static final Slugify slg = (new Slugify()).withTransliterator(true);
 
     private static final int MAX_IMAGE_NUM = 10000;
     private HomeData homeData;
@@ -530,5 +532,16 @@ public class WriteController implements Initializable {
         isSync = true;
         lblSyncStatus.setText("已同步");
         lblSyncStatus.setTextFill(Color.color(32 / 255f, 168 / 255f, 92 / 255f));
+    }
+
+    public void genSlug(ActionEvent event) {
+        logger.info("准备生成别名");
+
+        String text = txtSlug.getText();
+        String slug = slg.slugify(text);
+        txtSlug.setText(slug);
+
+        String hash = String.valueOf(System.currentTimeMillis());
+        successMsg("成功=>" + hash.substring(8));
     }
 }
