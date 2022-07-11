@@ -8,6 +8,7 @@ import com.terwergreen.helper.BlogHelperFactory;
 import com.terwergreen.helper.BlogTypeEnum;
 import com.terwergreen.model.control.KeyValueItem;
 import com.terwergreen.model.data.HomeData;
+import com.terwergreen.util.DateUtil;
 import com.terwergreen.util.HttpUtil;
 import com.terwergreen.util.ResourceUtil;
 import com.terwergreen.util.YamlUtil;
@@ -15,7 +16,6 @@ import com.terwergreen.util.http.HttpClientResult;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,7 +26,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -36,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -45,14 +43,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 /**
@@ -392,7 +388,7 @@ public class WriteController implements Initializable {
         String[] keywords = StringUtils.isEmpty(txtTag.getText()) ? null : txtTag.getText().split("_");
         String description = txtDesc.getText();
         String[] cats = StringUtils.isEmpty(txtTag.getText()) ? null : txtCat.getText().split("_");
-        LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats);
+        LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats, null);
         String metadata = YamlUtil.generateMetadata(data);
         // logger.info("new metadata=>" + metadata);
         StringBuilder sb = new StringBuilder();
@@ -432,7 +428,7 @@ public class WriteController implements Initializable {
         }
     }
 
-    public void saveLocal(ActionEvent event) {
+    public void saveLocal(ActionEvent event) throws Exception {
         String content = txtWriteContent.getText();
 
         String notePath = null;
@@ -445,7 +441,8 @@ public class WriteController implements Initializable {
             String[] keywords = StringUtils.isEmpty(txtTag.getText()) ? null : txtTag.getText().split("_");
             String description = txtDesc.getText();
             String[] cats = StringUtils.isEmpty(txtTag.getText()) ? null : txtCat.getText().split("_");
-            LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats);
+            String oldDatestr = DateUtil.parseDatestr(homeData.getMetadata().get("date"));
+            LinkedHashMap<String, Object> data = YamlUtil.buildMetaDataMap(txtPostTitle.getText(), txtSlug.getText(), keywords, description, cats, oldDatestr);
             String metadata = YamlUtil.generateMetadata(data);
             // logger.info("new metadata=>" + metadata);
             StringBuilder sb = new StringBuilder();
@@ -481,9 +478,10 @@ public class WriteController implements Initializable {
         lblMsg.setTextFill(Color.color(1, 0, 0));
     }
 
-    public void createMetadata(ActionEvent event) {
+    public void createMetadata(ActionEvent event) throws Exception {
+        String oldDatestr = DateUtil.parseDatestr(homeData.getMetadata().get("date"));
         if (txtSlug.getText().contains("pages")) {
-            doCreateMetadata(null, null);
+            doCreateMetadata(null, null, oldDatestr);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("元数据确认");
@@ -495,22 +493,22 @@ public class WriteController implements Initializable {
             alert.getButtonTypes().add(showDesc);
             Optional<ButtonType> option = alert.showAndWait();
             if (option.get() == ButtonType.OK) {
-                doCreateMetadata(null, null);
+                doCreateMetadata(null, null, oldDatestr);
             } else if (option.get() == showSlug) {
-                doCreateMetadata(null, txtDesc.getText());
+                doCreateMetadata(null, txtDesc.getText(), oldDatestr);
             } else if (option.get() == showDesc) {
-                doCreateMetadata(txtSlug.getText(), null);
+                doCreateMetadata(txtSlug.getText(), null, oldDatestr);
             }
         }
     }
 
-    private void doCreateMetadata(String oldSlug, String oldDesc) {
+    private void doCreateMetadata(String oldSlug, String oldDesc, String oldDatestr) {
         logger.info("准备重新生成元数据");
 
         LinkedHashMap<String, Object> data = YamlUtil.autoBuildMetaDataMap(txtPostTitle.getText(),
                 txtWriteContent.getText(), txtTag.getText().split("_"),
                 txtCat.getText().split("_"),
-                oldSlug, oldDesc
+                oldSlug, oldDesc, oldDatestr
         );
         this.setMetadata(data);
 
