@@ -2,10 +2,8 @@ package com.terwergreen.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.github.slugify.Slugify;
 import com.terwergreen.constant.Constants;
-import com.terwergreen.controller.WriteController;
 import com.terwergreen.util.http.HttpClientResult;
 import javafx.scene.control.Alert;
 import org.apache.commons.lang3.StringUtils;
@@ -14,15 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Yaml工具类
@@ -34,6 +30,7 @@ import java.util.Map;
 public class YamlUtil {
     private static Logger logger = LoggerFactory.getLogger(YamlUtil.class);
     private static final Slugify slg = new Slugify();
+
     /**
      * 生成元数据Map
      *
@@ -41,16 +38,25 @@ public class YamlUtil {
      * @param postSlug
      * @param keywords
      * @param description
+     * @param cats
+     * @param date
      * @return
      */
-    public static LinkedHashMap<String, Object> buildMetaDataMap(String postTitle, String postSlug, String[] keywords, String description, String[] cats) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    public static LinkedHashMap<String, Object> buildMetaDataMap(String postTitle, String postSlug, String[] keywords, String description, String[] cats, String datestr) {
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_CN_24);
         String now = sdf.format(new Date());
+        if (null != datestr) {
+            now = datestr;
+        }
 
         // 数据定义
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
         data.put("title", postTitle);
-        data.put("date", now);
+        try {
+            data.put("date", sdf.parse(now));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
         data.put("permalink", "/post/" + postSlug + ".html");
 
         // meta
@@ -91,9 +97,12 @@ public class YamlUtil {
      * @param postContent
      * @param keywords
      * @param cats
+     * @param oldSlug
+     * @param oldDesc
+     * @param oldDate
      * @return
      */
-    public static LinkedHashMap<String, Object> autoBuildMetaDataMap(String postTitle, String postContent, String[] keywords, String[] cats, String oldSlug, String oldDesc) {
+    public static LinkedHashMap<String, Object> autoBuildMetaDataMap(String postTitle, String postContent, String[] keywords, String[] cats, String oldSlug, String oldDesc, String oldDatestr) {
         String slug = null;
         String desc = null;
 
@@ -135,7 +144,7 @@ public class YamlUtil {
             logger.info("提取到缩略图=>" + thumbnail);
         }
 
-        return buildMetaDataMap(postTitle, slug, keywords, desc, cats);
+        return buildMetaDataMap(postTitle, slug, keywords, desc, cats, oldDatestr);
     }
 
     /**
