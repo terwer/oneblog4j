@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 /**
  * Yaml工具类
@@ -55,7 +57,13 @@ public class YamlUtil {
         try {
             data.put("date", sdf.parse(now));
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            try {
+                SimpleDateFormat sdfShort = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT_CN_24);
+                data.put("date", sdfShort.parse(now));
+            } catch (Exception e2) {
+                logger.error("日期转换错误", e);
+                throw new RuntimeException(e);
+            }
         }
         data.put("permalink", "/post/" + postSlug + ".html");
 
@@ -161,6 +169,8 @@ public class YamlUtil {
         options.setPrettyFlow(true);
         options.setIndicatorIndent(2);
         options.setIndentWithIndicator(true);
+        // options.setTimeZone(TimeZone.getTimeZone("GMT-8:00"));
+        options.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         // 数据导出
         Yaml yaml = new Yaml(options);
@@ -171,6 +181,11 @@ public class YamlUtil {
         yamlSb.append(output);
         yamlSb.append("---");
 
-        return yamlSb.toString();
+        // 先转成小写，防止错误替换
+        String result = yamlSb.toString()
+                .replaceAll("T", " ")
+                .replace("Z", "");
+
+        return result;
     }
 }

@@ -17,6 +17,7 @@ public class Constants {
      * 24小时中文日期
      */
     public static final String DATE_FORMAT_CN_24 = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_FORMAT_SHORT_CN_24 = "yyyy-MM-dd HH:mm";
 
     /**
      * 12小时中文日期
